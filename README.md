@@ -19,7 +19,7 @@ How To :
 <li> Right click on Databases > create > Databases (create database name "attendance-db") </li>
 <li> Right click on attendance-db chose restore </li>
 <li> Select Filename by click folder on right field </li>
-<li> Change extension on sql and search your attendance-db.sql </li>
+<li> Change extension on sql and search your attendance-db.sql on project folder</li>
 <li> click restore and refresh the database </li>
-<li> Go to laravel file then run php run serve on terminal </li>
+<li> Go to laravel file then run "php artisan serve" on terminal </li>
 </ol>
