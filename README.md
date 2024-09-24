@@ -9,7 +9,7 @@ How To :
 <li> Install PHP or XAMPP </li>
 <li> Connect php with path in environment variable (if in windows / ignore this step if using ubuntu or mac)</li>
 <li> Install Composer</li>
-<li> Install PostgreSql and make sure the password is "root" </li>
+<li> Install PostgreSql and make sure the password is user is postgres and password "root" </li>
 <li> start PHP or XAMPP (only apache if using XAMPP)</li>
 <li> extract project file or clone for github (git@github.com:ofaasd/simple-attendance-app.git)</li>
 <li> Go inside project folder (attendance-app)</li>
