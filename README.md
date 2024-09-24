@@ -15,6 +15,7 @@ How To :
 <li> Go inside project folder (attendance-app)</li>
 <li> run composer update </li>
 <li> if using clone from github rename .env.example file become .env file (ignore this step if using extract file)</li>
+<li> Restore the database using pgadmin </li>
 <li> Right click on Databases > create > Databases (create database name "attendance-db") </li>
 <li> Right click on attendance-db chose restore </li>
 <li> Select Filename by click folder on right field </li>
