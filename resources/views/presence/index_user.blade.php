@@ -42,7 +42,8 @@
                       <div class="mb-4">
                         <div class="row">
                           <div class="col-md-6">
-                            <div id="my_camera" style="margin:auto;"></div>
+                            <video id="my_camera" width="200" height="200" autoplay playsinline style="margin:auto;display:block;"></video>
+                            <canvas id="snap_canvas" width="200" height="200" style="display:none;"></canvas>
                             <br/>
                             <input type="button" class="btn btn-success me-sm-3 me-1 data-submit" value="Take Picture" onClick="take_snapshot()">
                             <input type="hidden" name="image" class="image-tag">
@@ -54,6 +55,24 @@
                             <input type="hidden" name="lat" id="lat" class="form-control" >
                             <input type="hidden" name="long" id="long" class="form-control" >
                             <input type="hidden" name="tanggal" id="tanggal" value="{{$tanggal}}" class="form-control" >
+
+                            {{-- Info SPPG & status jarak --}}
+                            @if(!empty($isAdmin) && $isAdmin)
+                            <div class="mt-3 alert alert-success py-1 px-2" style="font-size:0.85rem;">
+                                <i class="fas fa-user-shield"></i> Role admin: Anda dapat melakukan absen di lokasi mana pun.
+                            </div>
+                            @elseif($sppg && $sppg->lat && $sppg->lng)
+                            <div class="mt-3">
+                                <small class="text-muted">SPPG: <strong>{{$sppg->nama}}</strong></small><br>
+                                <div id="location-status" class="alert alert-warning mt-1 py-1 px-2" style="font-size:0.85rem;">
+                                    <i class="fas fa-spinner fa-spin"></i> Mendeteksi lokasi Anda...
+                                </div>
+                            </div>
+                            @else
+                            <div class="mt-3 alert alert-info py-1 px-2" style="font-size:0.85rem;">
+                                <i class="fas fa-info-circle"></i> SPPG belum dikonfigurasi untuk akun Anda. Hubungi admin.
+                            </div>
+                            @endif
                           </div>
 
                         </div>
@@ -61,11 +80,11 @@
                       <div class="row">
                         <div class="col-md-12 text-center">
                           @if(empty($absensi->start))
-                          <button type="submit" class="btn btn-primary me-sm-3 me-1 data-submit">Attendance In</button>
+                          <button type="submit" id="btn-absen" class="btn btn-primary me-sm-3 me-1 data-submit" {{(!empty($isAdmin) && $isAdmin) ? '' : 'disabled'}}>Attendance In</button>
                           @elseif(empty($absensi->end))
-                          <button type="submit" class="btn btn-danger me-sm-3 me-1 data-submit">Attendance Out</button>
+                          <button type="submit" id="btn-absen" class="btn btn-danger me-sm-3 me-1 data-submit" {{(!empty($isAdmin) && $isAdmin) ? '' : 'disabled'}}>Attendance Out</button>
                           @else
-                          <button type="submit" class="btn btn-primary me-sm-3 me-1 data-submit" disabled>Already Attendance</button>
+                          <button type="submit" id="btn-absen" class="btn btn-primary me-sm-3 me-1 data-submit" disabled>Already Attendance</button>
                           @endif
                         </div>
                       </div>
@@ -142,17 +161,98 @@
     </div>
 </div>
 <script>
+    let _cameraStream = null;
+    const IS_ADMIN = {{ (!empty($isAdmin) && $isAdmin) ? 'true' : 'false' }};
+
+    // Koordinat SPPG dari server
+    @if($sppg && $sppg->lat && $sppg->lng)
+    const SPPG_LAT = {{ $sppg->lat }};
+    const SPPG_LNG = {{ $sppg->lng }};
+    const SPPG_NAMA = {!! json_encode($sppg->nama) !!};
+    const MAX_RADIUS = 100; // meter
+    @else
+    const SPPG_LAT = null;
+    const SPPG_LNG = null;
+    const SPPG_NAMA = null;
+    const MAX_RADIUS = 100;
+    @endif
+
+    // Haversine distance (meter)
+    function haversineDistance(lat1, lng1, lat2, lng2) {
+        const R = 6371000;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLng/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function updateLocationStatus(lat, lng) {
+        $("#lat").val(lat);
+        $("#long").val(lng);
+
+        if (IS_ADMIN) {
+            @if(empty($absensi->start) || empty($absensi->end))
+            $("#btn-absen").prop('disabled', false);
+            @endif
+            return;
+        }
+
+        @if(!($sppg && $sppg->lat && $sppg->lng))
+        // Tidak ada SPPG, biarkan tombol tetap disabled
+        return;
+        @endif
+
+        @if(!empty($absensi->start) && !empty($absensi->end))
+        // Sudah absen penuh, tombol tetap disabled
+        return;
+        @endif
+
+        if (SPPG_LAT === null) return;
+
+        const dist = haversineDistance(SPPG_LAT, SPPG_LNG, parseFloat(lat), parseFloat(lng));
+        const distRounded = Math.round(dist);
+        const statusEl = document.getElementById('location-status');
+
+        if (dist <= MAX_RADIUS) {
+            if (statusEl) {
+                statusEl.className = 'alert alert-success mt-1 py-1 px-2';
+                statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Anda dalam jangkauan SPPG <strong>' + SPPG_NAMA + '</strong> (' + distRounded + ' m). Absen diizinkan.';
+            }
+            $("#btn-absen").prop('disabled', false);
+        } else {
+            if (statusEl) {
+                statusEl.className = 'alert alert-danger mt-1 py-1 px-2';
+                statusEl.innerHTML = '<i class="fas fa-times-circle"></i> Anda berada <strong>' + distRounded + ' m</strong> dari SPPG <strong>' + SPPG_NAMA + '</strong>. Maksimal jarak: ' + MAX_RADIUS + ' m.';
+            }
+            $("#btn-absen").prop('disabled', true);
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function(event) {
       const baseUrl = '{!! url("") !!}';
       $(".datatables").DataTable();
-      Webcam.set({
-          width: 200,
-          height: 200,
-          image_format: 'jpeg',
-          jpeg_quality: 90
-      });
 
-      Webcam.attach( '#my_camera' );
+      const video = document.getElementById('my_camera');
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+              .then(function(stream) {
+                  _cameraStream = stream;
+                  video.srcObject = stream;
+              })
+              .catch(function(err) {
+                  let msg = 'Tidak dapat mengakses kamera.';
+                  if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                      msg = 'Akses kamera ditolak. Harap izinkan akses kamera di browser Anda.';
+                  } else if (err.name === 'NotFoundError') {
+                      msg = 'Kamera tidak ditemukan pada perangkat ini.';
+                  } else if (err.name === 'NotSupportedError' || location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                      msg = 'Kamera hanya dapat diakses melalui koneksi HTTPS atau localhost.';
+                  }
+                  document.getElementById('my_camera').outerHTML = '<div id="my_camera" class="alert alert-danger" style="width:200px;margin:auto;">'+msg+'</div>';
+              });
+      } else {
+          video.outerHTML = '<div id="my_camera" class="alert alert-danger" style="width:200px;margin:auto;">Browser Anda tidak mendukung akses kamera. Gunakan HTTPS atau browser yang lebih baru.</div>';
+      }
       $('#addNew{{$title}}Form').submit(function(e) {
 
             e.preventDefault();
@@ -161,7 +261,7 @@
             </div>`);
             const lat = $("#lat").val();
             const long = $("#long").val();
-            if(lat && long){
+            if((lat && long) || IS_ADMIN){
 
                 const url = ''.concat(baseUrl).concat('/attendance');
                 // alert(url);
@@ -182,11 +282,15 @@
                         });
                         location.reload();
                     },
-                    error: function error(err) {
+                    error: function error(xhr) {
                         $("#overlay-place").html('');
+                        let msg = 'Please take a picture first';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
                         Swal.fire({
                         title: 'Data Not Saved',
-                        text: ' Please take a picture first',
+                        text: msg,
                         icon: 'error',
                         customClass: {
                             confirmButton: 'btn btn-success'
@@ -215,22 +319,49 @@
                 date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
                 );
         }, 500);
+
+      // Watch geolocation secara terus-menerus untuk update status jarak
+      if (navigator.geolocation) {
+          navigator.geolocation.watchPosition(
+              function(pos) {
+                  updateLocationStatus(pos.coords.latitude, pos.coords.longitude);
+              },
+              function(err) {
+                  const statusEl = document.getElementById('location-status');
+                  if (statusEl) {
+                      statusEl.className = 'alert alert-danger mt-1 py-1 px-2';
+                      statusEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Gagal mendapatkan lokasi: ' + err.message + '. Harap izinkan akses lokasi.';
+                  }
+                  if (!IS_ADMIN) {
+                      $("#btn-absen").prop('disabled', true);
+                  }
+              },
+              { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+          );
+      } else {
+          const statusEl = document.getElementById('location-status');
+          if (statusEl) {
+              statusEl.className = 'alert alert-danger mt-1 py-1 px-2';
+              statusEl.innerHTML = '<i class="fas fa-times-circle"></i> Browser tidak mendukung geolocation.';
+          }
+          if (!IS_ADMIN) {
+              $("#btn-absen").prop('disabled', true);
+          }
+      }
     });
     const res = document.getElementById('results');
     function take_snapshot() {
-      Webcam.snap( function(data_uri) {
-          $(".image-tag").val(data_uri);
-          res.innerHTML = '<img src="'+data_uri+'" align="center" width="200" height="200" />';
-      } );
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-      } else {
-        res.innerHTML = "Geolocation is not supported by this browser.";
+      const video = document.getElementById('my_camera');
+      const canvas = document.getElementById('snap_canvas');
+      if (!video || !video.srcObject) {
+          Swal.fire({ title: 'Kamera tidak aktif', text: 'Harap izinkan akses kamera terlebih dahulu.', icon: 'error' });
+          return;
       }
-    }
-    function showPosition(position) {
-      $("#lat").val(position.coords.latitude);
-      $("#long").val(position.coords.longitude);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, 200, 200);
+      const data_uri = canvas.toDataURL('image/jpeg', 0.9);
+      $(".image-tag").val(data_uri);
+      res.innerHTML = '<img src="'+data_uri+'" align="center" width="200" height="200" />';
     }
   </script>
 </x-app-layout>

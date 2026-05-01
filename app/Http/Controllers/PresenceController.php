@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Presence;
+use App\Models\Sppg;
 use App\Models\User;
 use App\Models\WorkingHour;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +15,18 @@ use DatePeriod;
 
 class PresenceController extends Controller
 {
+    /**
+     * Hitung jarak dua koordinat menggunakan Haversine formula (hasil dalam meter).
+     */
+    private function haversineDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $earthRadius = 6371000; // meter
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+        return $earthRadius * 2 * atan2(sqrt($a), sqrt(1 - $a));
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -45,7 +58,12 @@ class PresenceController extends Controller
         $title = 'Absensi';
         $indexed = $this->indexed;
 
-        return view('presence.index_user', compact('title', 'indexed', 'absensi', 'list_absensi','tanggal','date_start','date_end'));
+        $isAdmin = Auth::user()->hasRole('admin');
+
+        // Ambil SPPG milik user yang sedang login
+        $sppg = Sppg::where('user_id', Auth::user()->id)->first();
+
+        return view('presence.index_user', compact('title', 'indexed', 'absensi', 'list_absensi','tanggal','date_start','date_end','sppg','isAdmin'));
 
 
     }
@@ -63,7 +81,27 @@ class PresenceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $isAdmin = Auth::user()->hasRole('admin');
+
+        // Validasi koordinat SPPG (radius 100 meter) hanya untuk non-admin
+        $sppg = Sppg::where('user_id', Auth::user()->id)->first();
+        if (!$isAdmin) {
+            if (!$sppg || !$sppg->lat || !$sppg->lng) {
+                return response()->json(['message' => 'Koordinat SPPG belum dikonfigurasi untuk akun Anda.'], 403);
+            }
+
+            if ($request->lat === null || $request->long === null) {
+                return response()->json(['message' => 'Lokasi Anda tidak terdeteksi. Harap aktifkan izin lokasi pada browser.'], 422);
+            }
+
+            $userLat = (float) $request->lat;
+            $userLng = (float) $request->long;
+            $distance = $this->haversineDistance($sppg->lat, $sppg->lng, $userLat, $userLng);
+            if ($distance > 100) {
+                return response()->json(['message' => 'Anda berada di luar jangkauan SPPG (' . round($distance) . ' m dari titik SPPG). Maksimal jarak adalah 100 meter.'], 403);
+            }
+        }
+
         $role = Auth::user()->getRoleNames();
         $role = $role[0];
         $get_day = date('w');

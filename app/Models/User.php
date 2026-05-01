@@ -45,4 +45,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function sppgs()
+    {
+        return $this->belongsToMany(Sppg::class, 'sppg_user', 'user_id', 'sppg_id')->withTimestamps();
+    }
 }
