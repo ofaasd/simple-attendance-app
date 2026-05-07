@@ -63,7 +63,7 @@ class ItemController extends Controller
 
     public function index()
     {
-        $title = 'Items';
+        $title = 'Item / Bahan Pokok';
         $tableUrl = url('item/get_table');
         $addButtonLabel = 'Add Item';
 

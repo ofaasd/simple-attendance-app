@@ -27,6 +27,70 @@
 
                     </div>
                 </div>
+                <div class="card card-outline card-primary col-md-12">
+                    <div class="card-header">
+                        <h3 class="card-title">List SPPG & PO Terbaru</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @forelse($sppgList as $sppg)
+                                @php
+                                    $po = $sppg->latestPurchaseOrder;
+                                    $statusText = 'Belum ada PO';
+                                    $statusClass = 'badge-secondary';
+
+                                    if ($po) {
+                                        $statusText = $po->status_label;
+
+                                        if ((int) $po->status === \App\Models\PurchaseOrder::STATUS_DRAFTED) {
+                                            $statusText = 'Draft';
+                                            $statusClass = 'badge-secondary';
+                                        } elseif ((int) $po->status === \App\Models\PurchaseOrder::STATUS_APPROVED_HEAD) {
+                                            $statusText = 'Approved by Kepala';
+                                            $statusClass = 'badge-success';
+                                        } else {
+                                            $statusClass = 'badge-primary';
+                                        }
+                                    }
+                                @endphp
+                                <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                                    <div class="card h-100 shadow-sm border border-primary">
+                                        <div class="card-header p-2">
+                                            <strong>{{ $sppg->nama }}</strong>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            @if($po)
+                                                <div class="small text-muted mb-1">PO Terbaru</div>
+                                                <div><strong>{{ $po->kode_po ?? '-' }}</strong></div>
+                                                <div class="small mb-1">Tanggal: {{ optional($po->tanggal_po)->format('d M Y') ?? '-' }}</div>
+                                                <div class="small mb-2">Total: Rp {{ number_format((float) $po->total_bayar, 0, ',', '.') }}</div>
+                                            @else
+                                                <div class="small text-muted mb-2">Belum ada purchase order.</div>
+                                            @endif
+
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <span class="badge {{ $statusClass }}">{{ $statusText }}</span>
+                                                @if($po)
+                                                    <a href="{{ route('purchase_order.show', $po->id) }}" class="btn btn-sm btn-outline-primary">
+                                                        Lihat Detail PO
+                                                    </a>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary" disabled>
+                                                        Lihat Detail PO
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="col-12">
+                                    <div class="alert alert-info mb-0">Data SPPG belum tersedia.</div>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
                 <div class="card card-primary col-md-12">
                     <div class="card-header">
                         <div class="card-title">

@@ -44,45 +44,15 @@
               </p>
             </a>
           </li>
-          <li class="nav-item {{ request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('item') || request()->routeIs('item.*') ||  request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
-                SPPG
+                Master Data
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{route('item')}}" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Bahan Pokok</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{route('item_menu')}}" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Menu</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{route('item_vendor')}}" class="nav-link {{ request()->routeIs('item_vendor*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Harga Vendor Item</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{route('purchase_order')}}" class="nav-link {{ request()->routeIs('purchase_order*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Purchase Order</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{route('kategori')}}" class="nav-link {{ request()->routeIs('kategori*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Kategori</p>
-                </a>
-              </li>
               <li class="nav-item">
                 <a href="{{route('uom')}}" class="nav-link {{ request()->routeIs('uom*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
@@ -93,6 +63,47 @@
                 <a href="{{route('vendor')}}" class="nav-link {{ request()->routeIs('vendor*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Vendor</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('item')}}" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Bahan Pokok</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('kategori')}}" class="nav-link {{ request()->routeIs('kategori*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kategori</p>
+                </a>
+              </li>
+            </ul>
+          </li> 
+          <li class="nav-item {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-building"></i>
+              <p>
+                SPPG
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{route('item_vendor')}}" class="nav-link {{ request()->routeIs('item_vendor*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Harga Vendor Item</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('item_menu')}}" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Menu Maker</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('purchase_order')}}" class="nav-link {{ request()->routeIs('purchase_order*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Purchase Order</p>
                 </a>
               </li>
             </ul>
@@ -182,6 +193,24 @@
                 </a>
               </li>
             </ul>
+          </li>
+          @endrole
+          @role('akuntan')
+          <li class="nav-item">
+            <a href="{{route('purchase_order')}}" class="nav-link {{ request()->routeIs('purchase_order*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-file-invoice"></i>
+              <p>
+                Purchase Order
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('laporan_bahan_baku.index') }}" class="nav-link {{ request()->routeIs('laporan_bahan_baku.*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-file-alt"></i>
+              <p>
+                Laporan Bahan Baku Maker
+              </p>
+            </a>
           </li>
           @endrole
           @role('employee|hr')

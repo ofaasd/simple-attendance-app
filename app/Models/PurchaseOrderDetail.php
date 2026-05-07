@@ -16,14 +16,20 @@ class PurchaseOrderDetail extends Model
         'custom_item_satuan',
         'vendor_id',
         'qty',
+        'qty_diterima',
         'harga',
+        'harga_realisasi',
         'subtotal',
+        'subtotal_realisasi',
     ];
 
     protected $casts = [
         'qty' => 'decimal:2',
+        'qty_diterima' => 'decimal:2',
         'harga' => 'decimal:2',
+        'harga_realisasi' => 'decimal:2',
         'subtotal' => 'decimal:2',
+        'subtotal_realisasi' => 'decimal:2',
     ];
 
     public function purchaseOrder()

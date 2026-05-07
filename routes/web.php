@@ -12,6 +12,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemVendorController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\LaporanBahanBakuController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
 use Itstructure\LaRbac\Http\Controllers\{UserController, RoleController, PermissionController};
@@ -75,6 +76,11 @@ Route::middleware('auth')->group(function () {
     Route::post('menu-item/copy', [MenuController::class, 'copyFromDate'])->name('item_menu.copy');
     Route::get('purchase-order/generate', [PurchaseOrderController::class, 'generate'])->name('purchase_order.generate');
     Route::post('purchase-order/store', [PurchaseOrderController::class, 'store'])->name('purchase_order.store');
+    Route::get('purchase-order/{purchaseOrder}/show', [PurchaseOrderController::class, 'show'])->name('purchase_order.show');
+    Route::get('purchase-order/{purchaseOrder}/received', [PurchaseOrderController::class, 'received'])->name('purchase_order.received');
+    Route::post('purchase-order/{purchaseOrder}/received', [PurchaseOrderController::class, 'storeReceived'])->name('purchase_order.store_received');
+    Route::get('purchase-order/{purchaseOrder}/download-pdf', [PurchaseOrderController::class, 'downloadPdf'])->name('purchase_order.download_pdf');
+    Route::get('purchase-order/{purchaseOrder}/download-pdf/vendor/{vendorId}', [PurchaseOrderController::class, 'downloadPdfPerVendor'])->name('purchase_order.download_pdf_vendor');
     Route::get('purchase-order/{purchaseOrder}/edit', [PurchaseOrderController::class, 'edit'])->name('purchase_order.edit');
     Route::put('purchase-order/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('purchase_order.update');
     Route::delete('purchase-order/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('purchase_order.destroy');
@@ -82,8 +88,19 @@ Route::middleware('auth')->group(function () {
     Route::post('purchase-order/{purchaseOrder}/review/{stage}', [PurchaseOrderController::class, 'review'])
         ->whereIn('stage', ['akuntan', 'verval', 'head'])
         ->name('purchase_order.review');
+    Route::get('laporan-bahan-baku', [LaporanBahanBakuController::class, 'index'])->name('laporan_bahan_baku.index');
+    Route::get('laporan-bahan-baku/create', [LaporanBahanBakuController::class, 'create'])->name('laporan_bahan_baku.create');
+    Route::post('laporan-bahan-baku/generate', [LaporanBahanBakuController::class, 'generate'])->name('laporan_bahan_baku.generate');
+    Route::post('laporan-bahan-baku/{id}/request', [LaporanBahanBakuController::class, 'requestApproval'])->name('laporan_bahan_baku.request');
+    Route::post('laporan-bahan-baku/{id}/review/{stage}', [LaporanBahanBakuController::class, 'review'])
+        ->whereIn('stage', ['verval', 'head'])
+        ->name('laporan_bahan_baku.review');
+    Route::get('laporan-bahan-baku/{id}/edit', [LaporanBahanBakuController::class, 'edit'])->name('laporan_bahan_baku.edit');
+    Route::put('laporan-bahan-baku/{id}', [LaporanBahanBakuController::class, 'update'])->name('laporan_bahan_baku.update');
+    Route::delete('laporan-bahan-baku/{id}', [LaporanBahanBakuController::class, 'destroy'])->name('laporan_bahan_baku.destroy');
     Route::get('item', [ItemController::class, 'index'])->name('item');
     Route::get('item-vendor', [ItemVendorController::class, 'index'])->name('item_vendor');
+    Route::get('item-vendor/create', [ItemVendorController::class, 'create'])->name('item_vendor.create');
     Route::get('menu-item', [MenuController::class, 'index'])->name('item_menu');
     Route::get('purchase-order', [PurchaseOrderController::class, 'index'])->name('purchase_order');
     Route::resource('item', ItemController::class)->except(['index'])->names([
@@ -102,6 +119,7 @@ Route::middleware('auth')->group(function () {
         'update' => 'item_menu.update',
         'destroy' => 'item_menu.destroy',
     ]);
+    Route::post('item-vendor/bulk', [ItemVendorController::class, 'storeBulk'])->name('item_vendor.store_bulk');
     Route::resource('item-vendor', ItemVendorController::class)->only(['store', 'edit', 'update', 'destroy'])->names([
         'store' => 'item_vendor.store',
         'edit' => 'item_vendor.edit',

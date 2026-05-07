@@ -87,6 +87,14 @@ class ItemVendorController extends Controller
         return view('item_vendor.index', array_merge($data, compact('title', 'tableUrl')));
     }
 
+    public function create()
+    {
+        $title = 'Add Harga Vendor';
+
+        $data = $this->getMasterData();
+        return view('item_vendor.create', array_merge($data, compact('title')));
+    }
+
     public function get_table(Request $request)
     {
         $isEmployee = Auth::user()->hasRole('employee');
@@ -185,6 +193,77 @@ class ItemVendorController extends Controller
 
             if (!empty($toDemoteIds)) {
                 ItemVendor::whereIn('id', $toDemoteIds)->update(['rank' => 2]);
+            }
+        });
+
+        return response()->json('Saved');
+    }
+
+    public function storeBulk(Request $request)
+    {
+        $request->validate([
+            'sppg_id' => 'required|exists:sppg,id',
+            'rows'    => 'required|array|min:1',
+            'rows.*.item_id'   => 'required|exists:item,id',
+            'rows.*.vendor_id' => 'required|exists:vendor,id',
+            'rows.*.tanggal'   => 'required|date',
+            'rows.*.harga'     => 'required|numeric|min:0',
+            'rows.*.rank'      => 'required|integer|min:1',
+        ]);
+
+        if (Auth::user()->hasRole('employee')) {
+            $ownedSppg = Sppg::where('id', $request->sppg_id)->where('user_id', Auth::id())->exists();
+            if (!$ownedSppg) {
+                return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);
+            }
+        }
+
+        foreach ($request->rows as $row) {
+            $item = Item::findOrFail($row['item_id']);
+            if ((int) $item->sppg_id !== (int) $request->sppg_id) {
+                return response()->json(['message' => 'Item "' . $item->nama . '" harus berasal dari SPPG yang sama.'], 422);
+            }
+        }
+
+        DB::transaction(function () use ($request) {
+            foreach ($request->rows as $row) {
+                ItemVendor::create([
+                    'sppg_id'   => $request->sppg_id,
+                    'item_id'   => $row['item_id'],
+                    'vendor_id' => $row['vendor_id'],
+                    'tanggal'   => $row['tanggal'],
+                    'harga'     => $row['harga'],
+                    'rank'      => $row['rank'],
+                ]);
+
+                if ((int) $row['rank'] !== 1) {
+                    continue;
+                }
+
+                $otherLatestRows = ItemVendor::select(['id', 'vendor_id', 'rank'])
+                    ->where('item_id', $row['item_id'])
+                    ->where('vendor_id', '!=', $row['vendor_id'])
+                    ->orderBy('vendor_id')
+                    ->orderBy('tanggal', 'desc')
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+                $latestIdsPerVendor = [];
+                foreach ($otherLatestRows as $r) {
+                    if (!isset($latestIdsPerVendor[$r->vendor_id])) {
+                        $latestIdsPerVendor[$r->vendor_id] = $r;
+                    }
+                }
+
+                $toDemoteIds = collect($latestIdsPerVendor)
+                    ->filter(function ($r) { return (int) $r->rank === 1; })
+                    ->map(function ($r) { return (int) $r->id; })
+                    ->values()
+                    ->all();
+
+                if (!empty($toDemoteIds)) {
+                    ItemVendor::whereIn('id', $toDemoteIds)->update(['rank' => 2]);
+                }
             }
         });
 

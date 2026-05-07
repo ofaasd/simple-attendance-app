@@ -44,4 +44,14 @@ class Sppg extends Model
     {
         return $this->hasMany(Uom::class, 'sppg_id');
     }
+
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class, 'sppg_id');
+    }
+
+    public function latestPurchaseOrder()
+    {
+        return $this->hasOne(PurchaseOrder::class, 'sppg_id')->latestOfMany('tanggal_po');
+    }
 }

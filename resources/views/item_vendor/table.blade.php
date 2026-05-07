@@ -68,6 +68,8 @@
     $(".btn-edit-item-vendor").click(function () {
         $('#formItemVendor').trigger("reset");
         $(".modal-title").text('Edit Harga Vendor');
+        $('#section-add-mode').hide();
+        $('#section-edit-mode').show();
         $("#overlay-place").html(`<div class="overlay"><i class="fas fa-2x fa-sync fa-spin"></i></div>`);
 
         const id = $(this).data('id');

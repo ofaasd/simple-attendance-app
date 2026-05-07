@@ -32,6 +32,12 @@
                 </td>
                 <td>
                     <div class="btn-group" role="group">
+                        <a href="{{route('purchase_order.show', $row->id)}}" class="btn btn-sm btn-secondary" title="Detail"><i class="fas fa-eye"></i></a>
+
+                        @if(auth()->user()->hasRole('employee') && (int) $row->status >= \App\Models\PurchaseOrder::STATUS_APPROVED_AKUNTAN)
+                            <a href="{{route('purchase_order.received', $row->id)}}" class="btn btn-sm btn-warning" title="Penerimaan Barang"><i class="fas fa-box-open"></i></a>
+                        @endif
+
                         @if(auth()->user()->hasRole('employee') && (int) $row->status === \App\Models\PurchaseOrder::STATUS_DRAFTED)
                             <a href="{{route('purchase_order.edit', $row->id)}}" class="btn btn-sm btn-info" title="Edit"><i class="fas fa-edit"></i></a>
 

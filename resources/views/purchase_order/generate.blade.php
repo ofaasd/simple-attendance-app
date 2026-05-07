@@ -55,11 +55,15 @@
                                 + Tambah Item Custom
                             </button>
                         </div>
+                        <div class="card-body border-bottom py-2">
+                            <small class="text-muted">Hilangkan centang pada item yang bahan bakunya masih tersedia agar item tersebut tidak ikut dibuat ke Purchase Order.</small>
+                        </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-bordered mb-0" id="po-detail-table">
                                 <thead>
                                     <tr>
                                         <th style="width: 50px">No.</th>
+                                        <th style="width: 95px">Ikut PO</th>
                                         <th>Item</th>
                                         <th style="width: 180px">Qty</th>
                                         <th style="width: 280px">Vendor</th>
@@ -73,12 +77,18 @@
                                         @php
                                             $options = $vendorOptionsByItem[$item->id] ?? [];
                                         @endphp
-                                        <tr>
+                                        <tr class="po-item-row" data-row-type="regular">
                                             <td>{{ $idx + 1 }}</td>
+                                            <td class="text-center align-middle">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input po-include-toggle" id="po_include_{{$item->id}}" checked>
+                                                    <label class="custom-control-label" for="po_include_{{$item->id}}"></label>
+                                                </div>
+                                            </td>
                                             <td>
                                                 {{$item->nama}}
                                                 <small class="text-muted d-block">Satuan: {{optional($item->uom)->nama ?? '-'}}</small>
-                                                <input type="hidden" name="item_ids[]" value="{{$item->id}}">
+                                                <input type="hidden" name="item_ids[]" value="{{$item->id}}" class="po-item-id-input">
                                             </td>
                                             <td>
                                                 <input type="number" name="qtys[]" class="form-control po-qty" min="0.01" step="0.01" placeholder="Masukkan qty" required>
@@ -182,7 +192,13 @@
     function recalculatePurchaseOrder() {
         let grandTotal = 0;
 
-        $('#po-detail-table tbody tr').each(function () {
+        $('#po-detail-table tbody tr.po-item-row').each(function () {
+            if ($(this).hasClass('po-row-excluded')) {
+                $(this).find('.po-harga').text(formatRupiah(0));
+                $(this).find('.po-subtotal').text(formatRupiah(0));
+                return;
+            }
+
             const qty = parseFloat($(this).find('.po-qty').val()) || 0;
             const harga = parseFloat($(this).find('.po-vendor option:selected').data('harga')) || 0;
             const subtotal = qty * harga;
@@ -205,6 +221,22 @@
         });
 
         $('#grand-total').text(formatRupiah(grandTotal));
+    }
+
+    function syncPurchaseOrderRowState($row) {
+        const included = $row.find('.po-include-toggle').is(':checked');
+
+        $row.toggleClass('po-row-excluded', !included);
+        $row.find('.po-item-id-input').prop('disabled', !included);
+        $row.find('.po-qty').prop('disabled', !included).prop('required', included);
+        $row.find('.po-vendor').prop('disabled', !included).prop('required', included);
+
+        if (!included) {
+            $row.find('.po-qty').val('');
+            $row.find('.po-vendor').val('');
+        }
+
+        recalculatePurchaseOrder();
     }
 
     function buildCustomItemRow(idx, nama, uomId, uomLabel, vendorId, vendorLabel, harga, qty) {
@@ -248,11 +280,19 @@
     }
 
     $(function () {
+        $('.po-item-row').each(function () {
+            syncPurchaseOrderRowState($(this));
+        });
+
         recalculatePurchaseOrder();
         updateRowNumbers();
 
         $(document).on('change keyup', '.po-qty, .po-vendor', function () {
             recalculatePurchaseOrder();
+        });
+
+        $(document).on('change', '.po-include-toggle', function () {
+            syncPurchaseOrderRowState($(this).closest('.po-item-row'));
         });
 
         $(document).on('change keyup', '.custom-item-row .po-qty', function () {
@@ -295,7 +335,21 @@
         $('#formPurchaseOrderDetail').on('submit', function (e) {
             let hasVendorWithoutPrice = false;
 
-            $('#po-detail-table tbody tr').each(function () {
+            if ($('.po-item-row').length > 0 && $('.po-item-row .po-include-toggle:checked').length === 0 && $('#custom-items-tbody tr').length === 0) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Perhatian',
+                    text: 'Pilih minimal satu item yang akan di-PO atau tambahkan item custom.'
+                });
+                return;
+            }
+
+            $('#po-detail-table tbody tr.po-item-row').each(function () {
+                if ($(this).hasClass('po-row-excluded')) {
+                    return;
+                }
+
                 const vendorSelected = $(this).find('.po-vendor').val();
                 const harga = parseFloat($(this).find('.po-vendor option:selected').data('harga')) || 0;
 

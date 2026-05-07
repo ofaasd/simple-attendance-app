@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Item;
 use App\Models\ItemVendor;
 use App\Models\Menu;
@@ -12,10 +13,12 @@ use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class PurchaseOrderController extends Controller
 {
+    private const EMPLOYEE_ROLE_ID = 1;
     private const STATUS_DRAFT = 1;
     private const STATUS_REQUESTED = 2;
     private const STATUS_APPROVED_AKUNTAN = 3;
@@ -53,6 +56,47 @@ class PurchaseOrderController extends Controller
         }
 
         abort(403, 'Anda tidak memiliki akses review pada SPPG ini.');
+    }
+
+    private function loadPurchaseOrderForDocument(PurchaseOrder $purchaseOrder): PurchaseOrder
+    {
+        return tap($purchaseOrder)->load([
+            'sppg:id,nama,alamat',
+            'details.item:id,nama,uom_id',
+            'details.item.uom:id,nama',
+            'details.customUom:id,nama',
+            'details.vendor:id,kode_vendor,nama,alamat,metode_pengiriman',
+            'vendorReceipts:id,purchase_order_id,vendor_id,nota_path',
+        ]);
+    }
+
+    private function buildVendorDocumentGroups(PurchaseOrder $purchaseOrder)
+    {
+        $purchaseOrder->loadMissing('vendorReceipts');
+        $receiptsByVendorId = $purchaseOrder->vendorReceipts->keyBy(function ($receipt) {
+            return (int) $receipt->vendor_id;
+        });
+
+        return $purchaseOrder->details
+            ->groupBy(function ($detail) {
+                return (int) ($detail->vendor_id ?? 0);
+            })
+            ->map(function ($details) use ($receiptsByVendorId) {
+                $vendor = optional($details->first())->vendor;
+                $receipt = $receiptsByVendorId->get((int) optional($vendor)->id);
+
+                return [
+                    'vendor' => $vendor,
+                    'vendor_label' => trim(($vendor->kode_vendor ?? '') . ' ' . ($vendor->nama ?? '')),
+                    'details' => $details->values(),
+                    'total' => (float) $details->sum('subtotal'),
+                    'receipt' => $receipt,
+                ];
+            })
+            ->sortBy(function ($group) {
+                return strtolower($group['vendor_label'] ?: '-');
+            })
+            ->values();
     }
 
     private function getReviewStageConfig(string $stage): array
@@ -178,6 +222,32 @@ class PurchaseOrderController extends Controller
         }
 
         return back()->with('error', 'Purchase Order hanya dapat diubah saat status masih Drafted.');
+    }
+
+    private function ensureReceivedAccessible(PurchaseOrder $purchaseOrder): void
+    {
+        if (!$this->isEmployeeRoleOne()) {
+            abort(403, 'Halaman penerimaan barang hanya bisa diakses role employee (role 1).');
+        }
+
+        if ((int) $purchaseOrder->status < self::STATUS_APPROVED_AKUNTAN) {
+            abort(403, 'Halaman penerimaan barang hanya bisa diakses setelah PO disetujui Akuntan.');
+        }
+
+        $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
+    }
+
+    private function isEmployeeRoleOne(): bool
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return false;
+        }
+
+        return $user->roles()
+            ->where('id', self::EMPLOYEE_ROLE_ID)
+            ->where('name', 'employee')
+            ->exists();
     }
 
     private function generateKodePo(): string
@@ -577,6 +647,152 @@ class PurchaseOrderController extends Controller
             'uomOptions' => $uomOptions,
             'customVendors' => $customVendors,
         ]);
+    }
+
+    public function show(PurchaseOrder $purchaseOrder)
+    {
+        if (Auth::user()->hasRole('employee')) {
+            $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
+        }
+
+        $this->ensureApproverCanAccessSppg($purchaseOrder);
+
+        $this->loadPurchaseOrderForDocument($purchaseOrder);
+        $vendorGroups = $this->buildVendorDocumentGroups($purchaseOrder);
+
+        return view('purchase_order.show', [
+            'purchaseOrder' => $purchaseOrder,
+            'vendorGroups' => $vendorGroups,
+        ]);
+    }
+
+    public function downloadPdf(PurchaseOrder $purchaseOrder)
+    {
+        if (Auth::user()->hasRole('employee')) {
+            $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
+        }
+
+        $this->ensureApproverCanAccessSppg($purchaseOrder);
+
+        $this->loadPurchaseOrderForDocument($purchaseOrder);
+        $vendorGroups = $this->buildVendorDocumentGroups($purchaseOrder);
+
+        $pdf = Pdf::loadView('purchase_order.pdf', [
+            'purchaseOrder' => $purchaseOrder,
+            'vendorGroups' => $vendorGroups,
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('PO-' . $purchaseOrder->kode_po . '.pdf');
+    }
+
+    public function downloadPdfPerVendor(PurchaseOrder $purchaseOrder, int $vendorId)
+    {
+        if (Auth::user()->hasRole('employee')) {
+            $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
+        }
+
+        $this->ensureApproverCanAccessSppg($purchaseOrder);
+
+        $this->loadPurchaseOrderForDocument($purchaseOrder);
+        $vendorGroups = $this->buildVendorDocumentGroups($purchaseOrder);
+        $selectedGroup = $vendorGroups->first(function ($group) use ($vendorId) {
+            return (int) optional($group['vendor'])->id === $vendorId;
+        });
+
+        if (!$selectedGroup) {
+            abort(404, 'Vendor tidak ditemukan pada Purchase Order ini.');
+        }
+
+        $pdf = Pdf::loadView('purchase_order.pdf', [
+            'purchaseOrder' => $purchaseOrder,
+            'vendorGroups' => collect([$selectedGroup]),
+        ])->setPaper('a4', 'landscape');
+
+        $vendorCode = optional($selectedGroup['vendor'])->kode_vendor ?: 'vendor';
+
+        return $pdf->download('PO-' . $purchaseOrder->kode_po . '-' . $vendorCode . '.pdf');
+    }
+
+    public function received(PurchaseOrder $purchaseOrder)
+    {
+        $this->ensureReceivedAccessible($purchaseOrder);
+
+        $this->loadPurchaseOrderForDocument($purchaseOrder);
+        $vendorGroups = $this->buildVendorDocumentGroups($purchaseOrder);
+
+        return view('purchase_order.received', [
+            'purchaseOrder' => $purchaseOrder,
+            'vendorGroups' => $vendorGroups,
+            'isEditable' => $this->isEmployeeRoleOne(),
+        ]);
+    }
+
+    public function storeReceived(Request $request, PurchaseOrder $purchaseOrder)
+    {
+        $this->ensureReceivedAccessible($purchaseOrder);
+
+        if (!$this->isEmployeeRoleOne()) {
+            abort(403, 'Hanya role employee (role 1) yang dapat menyimpan penerimaan barang.');
+        }
+
+        $purchaseOrder->load(['details', 'vendorReceipts']);
+
+        $detailIds = $purchaseOrder->details->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $vendorIds = $purchaseOrder->details->pluck('vendor_id')->filter()->map(fn ($id) => (int) $id)->unique()->values()->all();
+
+        $request->validate([
+            'received_qtys' => 'array',
+            'received_qtys.*' => 'nullable|numeric|min:0',
+            'realized_prices' => 'array',
+            'realized_prices.*' => 'nullable|numeric|min:0',
+            'vendor_receipts' => 'array',
+            'vendor_receipts.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        DB::transaction(function () use ($request, $purchaseOrder, $detailIds, $vendorIds) {
+            foreach ($purchaseOrder->details as $detail) {
+                if (!in_array((int) $detail->id, $detailIds, true)) {
+                    continue;
+                }
+
+                $receivedQty = $request->input('received_qtys.' . $detail->id);
+                $realizedPrice = $request->input('realized_prices.' . $detail->id);
+
+                $qtyDiterima = $receivedQty === null || $receivedQty === '' ? null : (float) $receivedQty;
+                $hargaRealisasi = $realizedPrice === null || $realizedPrice === '' ? null : (float) $realizedPrice;
+
+                $detail->update([
+                    'qty_diterima' => $qtyDiterima,
+                    'harga_realisasi' => $hargaRealisasi,
+                    'subtotal_realisasi' => ($qtyDiterima !== null && $hargaRealisasi !== null)
+                        ? $qtyDiterima * $hargaRealisasi
+                        : null,
+                ]);
+            }
+
+            foreach ($vendorIds as $vendorId) {
+                if (!$request->hasFile('vendor_receipts.' . $vendorId)) {
+                    continue;
+                }
+
+                $existingReceipt = $purchaseOrder->vendorReceipts->firstWhere('vendor_id', $vendorId);
+                if ($existingReceipt && $existingReceipt->nota_path) {
+                    Storage::disk('public')->delete($existingReceipt->nota_path);
+                }
+
+                $path = $request->file('vendor_receipts.' . $vendorId)
+                    ->store('purchase-order-receipts', 'public');
+
+                $purchaseOrder->vendorReceipts()->updateOrCreate(
+                    ['vendor_id' => $vendorId],
+                    ['nota_path' => $path]
+                );
+            }
+        });
+
+        return redirect()
+            ->route('purchase_order.received', $purchaseOrder->id)
+            ->with('success', 'Data penerimaan barang berhasil disimpan.');
     }
 
     public function update(Request $request, PurchaseOrder $purchaseOrder)

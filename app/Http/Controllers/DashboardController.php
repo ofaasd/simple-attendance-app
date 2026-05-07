@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Presence;
+use App\Models\Sppg;
 use App\Models\User;
 use App\Models\WorkingHour;
 use DateTime;
@@ -15,7 +16,9 @@ class DashboardController extends Controller
     //
     public function index_hr(){
         $month = array(1=>'January','February','March','April','May','June','July','August','September','Oktober','November','December');
-        return view('dashboard2',compact('month'));
+        $sppgList = Sppg::with(['latestPurchaseOrder'])->orderBy('nama')->get();
+
+        return view('dashboard2',compact('month','sppgList'));
     }
     public function index(){
 

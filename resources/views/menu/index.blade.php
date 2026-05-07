@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="card col-md-12">
                         <div class="card-header">
-                            <a href="javascript:void(0)" class="btn btn-primary btn-create" data-toggle="modal" data-target="#modal-menu">+ {{$addButtonLabel ?? 'Add Menu'}}</a>
+                            <a href="{{ route('item_menu.create') }}" class="btn btn-primary">+ {{$addButtonLabel ?? 'Add Menu'}}</a>
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">
@@ -198,15 +198,15 @@
         return String(value).slice(0, 10);
     }
 
-    function applyDateBounds() {
-        const minDate = getFirstDayOfCurrentMonth();
-        const maxDate = getTodayDate();
+    // function applyDateBounds() {
+    //     const minDate = getFirstDayOfCurrentMonth();
+    //     const maxDate = getTodayDate();
 
-        $('#menu_tanggal').attr('min', minDate).attr('max', maxDate);
-        $('#menu_copy_source_tanggal').attr('min', minDate).attr('max', maxDate);
-        $('#filter_tanggal_start').attr('min', minDate).attr('max', maxDate);
-        $('#filter_tanggal_end').attr('min', minDate).attr('max', maxDate);
-    }
+    //     $('#menu_tanggal').attr('min', minDate).attr('max', maxDate);
+    //     $('#menu_copy_source_tanggal').attr('min', minDate).attr('max', maxDate);
+    //     $('#filter_tanggal_start').attr('min', minDate).attr('max', maxDate);
+    //     $('#filter_tanggal_end').attr('min', minDate).attr('max', maxDate);
+    // }
 
     function initializeListDateFilters() {
         $('#filter_tanggal_start').val(getFirstDayOfCurrentMonth());
@@ -404,7 +404,7 @@
 
     $(function () {
         initializeMenuSelect2();
-        applyDateBounds();
+        // applyDateBounds();
         initializeListDateFilters();
         refresh_table();
         filterMenuMasterBySppg();
@@ -447,21 +447,6 @@
 
         $('#btn-copy-to-add-form').on('click', function () {
             copySelectedMenuToAddForm();
-        });
-
-        $(".btn-create").click(function () {
-            $('#formMenu').trigger("reset");
-            $("#menu_id").val('');
-            $(".modal-title").text('Add New {{$addButtonLabel ?? "Menu"}}');
-            $("#menu-copy-section").show();
-            initializeMenuSelect2();
-            applyDateBounds();
-            filterMenuMasterBySppg();
-            $('#menu_item_ids').trigger('change');
-            initializeDetailMenuInputs();
-            initializeMenuDate();
-            initializeCopySourceDate();
-            loadCopySourceMenuOptions();
         });
 
         $("#formMenu").submit(function (e) {

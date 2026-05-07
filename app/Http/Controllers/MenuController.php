@@ -51,6 +51,14 @@ class MenuController extends Controller
         return view('menu.index', array_merge($data, compact('title', 'tableUrl', 'addButtonLabel')));
     }
 
+    public function create()
+    {
+        $title = 'Add Menu';
+
+        $data = $this->getMenuMasterData();
+        return view('menu.create', array_merge($data, compact('title')));
+    }
+
     public function get_table(Request $request)
     {
         $menu = $this->getMenuBaseQuery()
