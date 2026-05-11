@@ -38,3 +38,4 @@ new Chart(barChartCanvas, {
     options: barChartOptions
 })
 </script>
+

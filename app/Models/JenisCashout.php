@@ -20,3 +20,4 @@ class JenisCashout extends Model
         return $this->hasMany(CashOut::class, 'jenis_cashout_id');
     }
 }
+

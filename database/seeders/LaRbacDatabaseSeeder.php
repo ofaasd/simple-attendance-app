@@ -20,3 +20,4 @@ class LaRbacDatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
     }
 }
+

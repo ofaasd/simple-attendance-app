@@ -308,3 +308,4 @@ class PresenceController extends Controller
         return view('presence.log', compact('title', 'list_absensi','date_start','date_end'));
     }
 }
+

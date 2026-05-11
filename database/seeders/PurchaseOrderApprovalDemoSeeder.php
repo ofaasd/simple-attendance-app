@@ -77,3 +77,4 @@ class PurchaseOrderApprovalDemoSeeder extends Seeder
         }
     }
 }
+

@@ -99,3 +99,4 @@ class PurchaseOrder extends Model
         return $this->hasMany(PurchaseOrderVendorReceipt::class, 'purchase_order_id');
     }
 }
+

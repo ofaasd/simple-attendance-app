@@ -52,3 +52,4 @@ class User extends Authenticatable
         return $this->belongsToMany(Sppg::class, 'sppg_user', 'user_id', 'sppg_id')->withTimestamps();
     }
 }
+

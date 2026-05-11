@@ -9,7 +9,7 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      @role('employee')
+      @role('perwakilan yayasan')
       <li class="nav-item">
         <a class="nav-link" href="#" role="button" title="Total Saldo">
           <i class="fas fa-wallet"></i>
@@ -56,3 +56,4 @@
     </ul>
   </nav>
   <!-- /.navbar -->
+

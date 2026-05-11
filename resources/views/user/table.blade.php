@@ -142,3 +142,4 @@ $(document).on('click', '.delete-record', function () {
     });
 });
 </script>
+

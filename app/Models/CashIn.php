@@ -29,3 +29,4 @@ class CashIn extends Model
         return $this->belongsTo(Sppg::class, 'sppg_id');
     }
 }
+

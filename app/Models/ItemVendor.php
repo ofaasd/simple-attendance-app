@@ -41,3 +41,4 @@ class ItemVendor extends Model
         return $this->belongsTo(Vendor::class, 'vendor_id');
     }
 }
+

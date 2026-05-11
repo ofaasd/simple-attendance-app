@@ -37,3 +37,4 @@ class DistribusiMenu extends Model
         return $this->hasMany(DistribusiDetail::class, 'id_distribusi');
     }
 }
+

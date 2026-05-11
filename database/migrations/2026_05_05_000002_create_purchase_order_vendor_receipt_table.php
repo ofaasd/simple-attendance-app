@@ -24,3 +24,4 @@ return new class extends Migration
         Schema::dropIfExists('purchase_order_vendor_receipt');
     }
 };
+

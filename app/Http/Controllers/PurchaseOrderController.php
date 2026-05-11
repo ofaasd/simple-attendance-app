@@ -27,7 +27,7 @@ class PurchaseOrderController extends Controller
 
     private function getSppgOptions()
     {
-        $isEmployee = Auth::user()->hasRole('employee');
+        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
         $isApprover = Auth::user()->hasAnyRole(['akuntan', 'verval', 'head']);
 
         if ($isEmployee) {
@@ -126,7 +126,7 @@ class PurchaseOrderController extends Controller
 
     private function ensureEmployeeCanAccessSppg(int $sppgId): ?\Illuminate\Http\JsonResponse
     {
-        if (!Auth::user()->hasRole('employee')) {
+        if (!Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             return null;
         }
 
@@ -140,7 +140,7 @@ class PurchaseOrderController extends Controller
 
     private function ensureEmployeeCanAccessSppgForView(int $sppgId)
     {
-        if (!Auth::user()->hasRole('employee')) {
+        if (!Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             return null;
         }
 
@@ -281,7 +281,7 @@ class PurchaseOrderController extends Controller
             : [];
 
         $query = PurchaseOrder::with(['sppg', 'details'])
-            ->when(Auth::user()->hasRole('employee'), function ($q) {
+            ->when(Auth::user()->hasRole\('perwakilan\ yayasan'\), function ($q) {
                 $q->whereHas('sppg', function ($s) {
                     $s->where('user_id', Auth::id());
                 });
@@ -309,7 +309,7 @@ class PurchaseOrderController extends Controller
 
     public function generate(Request $request)
     {
-        if (!Auth::user()->hasRole('employee')) {
+        if (!Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             abort(403, 'Hanya role employee yang dapat generate Purchase Order.');
         }
 
@@ -357,7 +357,7 @@ class PurchaseOrderController extends Controller
 
     public function store(Request $request)
     {
-        if (!Auth::user()->hasRole('employee')) {
+        if (!Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             abort(403, 'Hanya role employee yang dapat membuat Purchase Order.');
         }
 
@@ -584,7 +584,7 @@ class PurchaseOrderController extends Controller
 
     public function edit(PurchaseOrder $purchaseOrder)
     {
-        if (!Auth::user()->hasRole('employee')) {
+        if (!Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             abort(403, 'Hanya role employee yang dapat mengedit Purchase Order.');
         }
 
@@ -647,7 +647,7 @@ class PurchaseOrderController extends Controller
 
     public function show(PurchaseOrder $purchaseOrder)
     {
-        if (Auth::user()->hasRole('employee')) {
+        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
         }
 
@@ -664,7 +664,7 @@ class PurchaseOrderController extends Controller
 
     public function downloadPdf(PurchaseOrder $purchaseOrder)
     {
-        if (Auth::user()->hasRole('employee')) {
+        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
         }
 
@@ -683,7 +683,7 @@ class PurchaseOrderController extends Controller
 
     public function downloadPdfPerVendor(PurchaseOrder $purchaseOrder, int $vendorId)
     {
-        if (Auth::user()->hasRole('employee')) {
+        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
         }
 
@@ -825,7 +825,7 @@ class PurchaseOrderController extends Controller
 
     public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
-        if (!Auth::user()->hasRole('employee')) {
+        if (!Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             abort(403, 'Hanya role employee yang dapat memperbarui Purchase Order.');
         }
 
@@ -1066,7 +1066,7 @@ class PurchaseOrderController extends Controller
 
     public function destroy(PurchaseOrder $purchaseOrder)
     {
-        if (!Auth::user()->hasRole('employee')) {
+        if (!Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             abort(403, 'Hanya role employee yang dapat menghapus Purchase Order.');
         }
 
@@ -1085,7 +1085,7 @@ class PurchaseOrderController extends Controller
 
     public function requestApproval(PurchaseOrder $purchaseOrder)
     {
-        if (!Auth::user()->hasRole('employee')) {
+        if (!Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             abort(403, 'Hanya role employee yang dapat mengajukan Purchase Order.');
         }
 
@@ -1168,3 +1168,4 @@ class PurchaseOrderController extends Controller
         return redirect()->route('purchase_order')->with('success', 'Purchase Order ' . $purchaseOrder->kode_po . ' tidak disetujui oleh ' . ucfirst($config['role']) . ' dan dikembalikan ke Draft.');
     }
 }
+

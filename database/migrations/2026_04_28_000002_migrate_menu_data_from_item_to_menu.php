@@ -104,3 +104,4 @@ return new class extends Migration
         DB::table('menu')->delete();
     }
 };
+

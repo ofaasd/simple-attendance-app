@@ -7,3 +7,4 @@ return [
     'delete_permission' => 'Удалить полномочие',
     'permission_details' => 'Детали полномочия',
 ];
+

@@ -505,3 +505,4 @@ class LaporanBahanBakuController extends Controller
             ->with('success', 'Laporan bahan baku berhasil dihapus.');
     }
 }
+

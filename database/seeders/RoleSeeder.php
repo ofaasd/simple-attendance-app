@@ -87,3 +87,4 @@ class RoleSeeder extends Seeder
             ->attach($permissions);
     }
 }
+

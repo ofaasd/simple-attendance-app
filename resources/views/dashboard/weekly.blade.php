@@ -93,3 +93,4 @@ var donutChartCanvas = $('#weeklyDonutChart').get(0).getContext('2d')
     options: donutOptions
     })
 </script>
+

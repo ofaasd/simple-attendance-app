@@ -188,3 +188,4 @@
         $('.detail-selector').prop('checked', true);
     });
 </script>
+

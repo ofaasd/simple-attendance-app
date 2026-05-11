@@ -9,3 +9,4 @@ return [
     'unique' => 'The ":attribute" already exists with this value ":input" in database.',
     'required_to_delete' => 'Select items to delete.',
 ];
+

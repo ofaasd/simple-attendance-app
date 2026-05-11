@@ -35,7 +35,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          @role('employee')
+          @role('perwakilan yayasan')
           <li class="nav-item">
             <a href="{{route('dashboard_employee')}}" class="nav-link {{(Route::currentRouteName() == "dashboard_employee")?"active":""}}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -44,7 +44,7 @@
               </p>
             </a>
           </li>
-          @role('employee|hr')
+          @role('perwakilan yayasan|admin')
           <li class="nav-item">
             <a href="{{route('attendance')}}" class="nav-link {{(Route::currentRouteName() == "attendance")?"active":""}}" >
               <i class="nav-icon fas fa-pen-square"></i>
@@ -161,7 +161,7 @@
             </ul>
           </li>
           @endrole
-          @role('hr')
+          @role('admin')
           <li class="nav-item">
             <a href="{{route('dashboard')}}" class="nav-link {{(Route::currentRouteName() == "dashboard")?"active":""}}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -288,7 +288,7 @@
           </li>
           @endrole
           
-          @role('hr')
+          @role('admin')
           <li class="nav-item">
             <a href="{{route('attendance_report')}}" class="nav-link {{(Route::currentRouteName() == "attendance_report")?"active":""}}" >
               <i class="nav-icon fas fa-chart-area"></i>
@@ -351,3 +351,4 @@
     </div>
     <!-- /.sidebar -->
   </aside>
+

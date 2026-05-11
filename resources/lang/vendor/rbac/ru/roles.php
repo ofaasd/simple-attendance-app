@@ -7,3 +7,4 @@ return [
     'delete_role' => 'Удалить роль',
     'role_details' => 'Детали роли',
 ];
+

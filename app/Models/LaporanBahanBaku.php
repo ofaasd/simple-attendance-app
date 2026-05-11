@@ -82,3 +82,4 @@ class LaporanBahanBaku extends Model
         };
     }
 }
+

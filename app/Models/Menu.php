@@ -42,3 +42,4 @@ class Menu extends Model
         return $this->hasMany(DetailMenu::class, 'id_menu');
     }
 }
+

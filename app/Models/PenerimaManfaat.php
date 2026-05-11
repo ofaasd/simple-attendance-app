@@ -25,3 +25,4 @@ class PenerimaManfaat extends Model
         return $this->hasMany(DistribusiDetail::class, 'id_penerima_manfaat');
     }
 }
+

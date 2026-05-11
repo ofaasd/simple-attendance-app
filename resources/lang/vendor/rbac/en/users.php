@@ -8,3 +8,4 @@ return [
     'delete_user' => 'Delete user',
     'name' => 'Name',
 ];
+

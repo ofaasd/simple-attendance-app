@@ -42,3 +42,4 @@ class WorkingHour extends Model
 		'days'
 	];
 }
+

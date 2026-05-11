@@ -84,3 +84,4 @@ class Presence extends Model
 		'overtime'
 	];
 }
+

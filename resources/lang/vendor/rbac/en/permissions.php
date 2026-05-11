@@ -7,3 +7,4 @@ return [
     'delete_permission' => 'Delete permission',
     'permission_details' => 'Permission details',
 ];
+

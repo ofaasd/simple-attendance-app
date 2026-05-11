@@ -64,3 +64,4 @@ class PenerimaManfaatController extends Controller
         return redirect()->route('penerima_manfaat.index')->with('success', 'Data penerima manfaat berhasil diimport.');
     }
 }
+

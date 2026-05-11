@@ -35,3 +35,4 @@ class CashOut extends Model
         return $this->belongsTo(Sppg::class, 'sppg_id');
     }
 }
+

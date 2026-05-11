@@ -65,3 +65,4 @@ class Sppg extends Model
         return $this->hasMany(CashIn::class, 'sppg_id');
     }
 }
+

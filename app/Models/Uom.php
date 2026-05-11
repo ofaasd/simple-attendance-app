@@ -26,3 +26,4 @@ class Uom extends Model
         return $this->hasMany(Item::class, 'uom_id');
     }
 }
+

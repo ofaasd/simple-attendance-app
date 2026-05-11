@@ -43,3 +43,4 @@ class Item extends Model
         return $this->hasMany(ItemVendor::class, 'item_id');
     }
 }
+

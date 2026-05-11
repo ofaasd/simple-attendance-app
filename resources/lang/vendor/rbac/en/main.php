@@ -13,3 +13,4 @@ return [
     'delete_confirm' => 'Are you sure you want to delete?',
     'generated_automatically' => 'Generated automatically',
 ];
+

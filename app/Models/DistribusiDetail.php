@@ -35,3 +35,4 @@ class DistribusiDetail extends Model
         return $this->belongsTo(PenerimaManfaat::class, 'id_penerima_manfaat');
     }
 }
+

@@ -15,7 +15,7 @@ class CashFlowController extends Controller
         $title = 'Cashflow';
         $tableUrl = url('cashflow/get_table');
 
-        $isEmployee = Auth::user()->hasRole('employee');
+        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
         $employeeSppgIds = $isEmployee ? Auth::user()->sppgs->pluck('id')->all() : [];
         $sppg = $isEmployee && count($employeeSppgIds)
             ? Sppg::whereIn('id', $employeeSppgIds)->orderBy('nama')->get()
@@ -45,7 +45,7 @@ class CashFlowController extends Controller
             }
         }
 
-        $employeeSppgIds = Auth::user()->hasRole('employee') ? Auth::user()->sppgs->pluck('id')->all() : [];
+        $employeeSppgIds = Auth::user()->hasRole\('perwakilan\ yayasan'\) ? Auth::user()->sppgs->pluck('id')->all() : [];
 
         $cashInQuery = CashIn::with('sppg')
             ->when($employeeSppgIds, function ($q) use ($employeeSppgIds) {
@@ -101,3 +101,4 @@ class CashFlowController extends Controller
         ));
     }
 }
+

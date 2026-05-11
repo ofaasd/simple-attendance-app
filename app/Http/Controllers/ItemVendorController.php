@@ -14,7 +14,7 @@ class ItemVendorController extends Controller
 {
     private function isHr(): bool
     {
-        return Auth::user()->hasRole('hr');
+        return Auth::user()->hasRole('admin');
     }
 
     private function ensureHrAccess()
@@ -58,7 +58,7 @@ class ItemVendorController extends Controller
 
     private function getMasterData(): array
     {
-        $isEmployee = Auth::user()->hasRole('employee');
+        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
 
         $sppg = $isEmployee
             ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get()
@@ -97,7 +97,7 @@ class ItemVendorController extends Controller
 
     public function get_table(Request $request)
     {
-        $isEmployee = Auth::user()->hasRole('employee');
+        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
         $isHr = $this->isHr();
 
         $itemVendor = ItemVendor::with(['sppg', 'item', 'vendor'])
@@ -139,7 +139,7 @@ class ItemVendorController extends Controller
             'rank' => 'required|integer|min:1',
         ]);
 
-        if (Auth::user()->hasRole('employee')) {
+        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             $ownedSppg = Sppg::where('id', $request->sppg_id)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);
@@ -211,7 +211,7 @@ class ItemVendorController extends Controller
             'rows.*.rank'      => 'required|integer|min:1',
         ]);
 
-        if (Auth::user()->hasRole('employee')) {
+        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
             $ownedSppg = Sppg::where('id', $request->sppg_id)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);
@@ -360,3 +360,5 @@ class ItemVendorController extends Controller
         return response()->json('Deleted');
     }
 }
+
+

@@ -204,3 +204,4 @@ class DashboardController extends Controller
         return view('dashboard.monthly',compact('date_chart','total','status','list_status'));
     }
 }
+

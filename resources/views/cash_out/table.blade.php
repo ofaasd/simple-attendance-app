@@ -31,3 +31,4 @@ $('#cash-out-table').DataTable({
     order: [[1, 'desc']]
 });
 </script>
+

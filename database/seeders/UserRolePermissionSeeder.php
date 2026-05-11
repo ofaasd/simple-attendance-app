@@ -36,16 +36,16 @@ class UserRolePermissionSeeder extends Seeder
                 'name' => 'HR1',
             ],$default_user_value));
 
-            $role_employee = Role::create(['name'=>'employee']);
-            $role_hr = Role::create(['name'=>'hr']);
+            $role_employee = Role::create(['name'=>'perwakilan yayasan']);
+            $role_hr = Role::create(['name'=>'admin']);
 
             $permission = Permission::create(['name' => 'read role']);
             $permission = Permission::create(['name' => 'create role']);
             $permission = Permission::create(['name' => 'update role']);
             $permission = Permission::create(['name' => 'delete role']);
 
-            $employee->assignRole('employee');
-            $hr->assignRole('hr');
+            $employee->assignRole('perwakilan yayasan');
+            $hr->assignRole('admin');
             DB::commit();
         } catch (\Throwable $th) {
             echo $th;
@@ -54,3 +54,4 @@ class UserRolePermissionSeeder extends Seeder
 
     }
 }
+

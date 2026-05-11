@@ -93,3 +93,4 @@ $('#distribusi-table').DataTable({
     autoWidth: false,
 });
 </script>
+

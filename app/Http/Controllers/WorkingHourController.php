@@ -120,3 +120,4 @@ class WorkingHourController extends Controller
         $user = UsWorkingHourer::where('user_id', $id)->delete();
     }
 }
+

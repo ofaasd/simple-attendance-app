@@ -7,3 +7,4 @@ return [
     'delete_role' => 'Delete role',
     'role_details' => 'Role details',
 ];
+

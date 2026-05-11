@@ -13,3 +13,4 @@ return [
     'delete_confirm' => 'Вы уверены что хотите это удалить?',
     'generated_automatically' => 'Сгенерирован автоматически',
 ];
+
