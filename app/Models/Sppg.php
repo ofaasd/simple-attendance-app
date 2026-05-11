@@ -18,6 +18,11 @@ class Sppg extends Model
         'lat',
         'lng',
         'user_id',
+        'saldo',
+    ];
+
+    protected $casts = [
+        'saldo' => 'decimal:2',
     ];
 
     public function user()
@@ -53,5 +58,10 @@ class Sppg extends Model
     public function latestPurchaseOrder()
     {
         return $this->hasOne(PurchaseOrder::class, 'sppg_id')->latestOfMany('tanggal_po');
+    }
+
+    public function cashIns()
+    {
+        return $this->hasMany(CashIn::class, 'sppg_id');
     }
 }

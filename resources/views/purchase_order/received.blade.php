@@ -42,7 +42,8 @@
                         </ul>
                     </div>
                 @endif
-
+                <form action="{{ route('purchase_order.store_received', $purchaseOrder->id) }}" method="POST" enctype="multipart/form-data" id="form-received">
+                    @csrf
                 <div class="card card-outline card-warning">
                     <div class="card-header">
                         <h3 class="card-title mb-0">Informasi Purchase Order</h3>
@@ -82,11 +83,29 @@
                                 <div>{{ $purchaseOrder->details->count() }}</div>
                             </div>
                         </div>
+                        @php
+                            $selectedStatus = old('status') ?: (string) $purchaseOrder->status;
+                        @endphp
+                        <div class="row mt-3">
+                            <div class="col-md-4 mb-2">
+                                <strong>Status PO</strong>
+                                @if($isEditable)
+                                    <select name="status" class="form-control form-control-sm">
+                                        <option value="0" {{ $selectedStatus === '0' ? 'selected' : '' }}>Draft</option>
+                                        <option value="1" {{ $selectedStatus === '1' ? 'selected' : '' }}>Penerimaan Barang</option>
+                                        <option value="2" {{ $selectedStatus === '2' ? 'selected' : '' }}>Approved by Akuntan</option>
+                                        <option value="3" {{ $selectedStatus === '3' ? 'selected' : '' }}>Approved by Perwakilan Yayasan</option>
+                                        <option value="4" {{ $selectedStatus === '4' ? 'selected' : '' }}>Approved by Kepala SPPG</option>
+                                    </select>
+                                @else
+                                    <div>{{ \App\Models\PurchaseOrder::statusLabels()[$purchaseOrder->status] ?? 'Unknown' }}</div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <form action="{{ route('purchase_order.store_received', $purchaseOrder->id) }}" method="POST" enctype="multipart/form-data" id="form-received">
-                    @csrf
+                
 
                     @foreach($vendorGroups as $group)
                         @php

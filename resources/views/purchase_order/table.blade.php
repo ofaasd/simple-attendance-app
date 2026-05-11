@@ -34,7 +34,7 @@
                     <div class="btn-group" role="group">
                         <a href="{{route('purchase_order.show', $row->id)}}" class="btn btn-sm btn-secondary" title="Detail"><i class="fas fa-eye"></i></a>
 
-                        @if(auth()->user()->hasRole('employee') && (int) $row->status >= \App\Models\PurchaseOrder::STATUS_APPROVED_AKUNTAN)
+                        @if(auth()->user()->hasRole('employee') && (int) $row->status !== 4)
                             <a href="{{route('purchase_order.received', $row->id)}}" class="btn btn-sm btn-warning" title="Penerimaan Barang"><i class="fas fa-box-open"></i></a>
                         @endif
 
@@ -46,12 +46,7 @@
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash"></i></button>
                             </form>
-
-                            <form action="{{route('purchase_order.request', $row->id)}}" method="POST" class="form-request-po">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-primary" title="Request"><i class="fas fa-paper-plane"></i></button>
-                            </form>
-                        @elseif(auth()->user()->hasRole('akuntan') && (int) $row->status === \App\Models\PurchaseOrder::STATUS_REQUESTED)
+                        @elseif(auth()->user()->hasRole('akuntan') && (int) $row->status === \App\Models\PurchaseOrder::STATUS_RECEIVED)
                             <form action="{{route('purchase_order.review', ['purchaseOrder' => $row->id, 'stage' => 'akuntan'])}}" method="POST" class="form-review-po" data-stage="akuntan">
                                 @csrf
                                 <input type="hidden" name="action" value="approve">

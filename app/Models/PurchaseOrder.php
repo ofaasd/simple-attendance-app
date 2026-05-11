@@ -9,11 +9,11 @@ class PurchaseOrder extends Model
 {
     use SoftDeletes;
 
-    public const STATUS_DRAFTED = 1;
-    public const STATUS_REQUESTED = 2;
-    public const STATUS_APPROVED_AKUNTAN = 3;
-    public const STATUS_APPROVED_VERVAL = 4;
-    public const STATUS_APPROVED_HEAD = 5;
+    public const STATUS_DRAFTED = 0;
+    public const STATUS_RECEIVED = 1;
+    public const STATUS_APPROVED_AKUNTAN = 2;
+    public const STATUS_APPROVED_VERVAL = 3;
+    public const STATUS_APPROVED_HEAD = 4;
 
     protected $table = 'purchase_order';
 
@@ -48,8 +48,8 @@ class PurchaseOrder extends Model
 
         return match ($this->last_rejected_by_role) {
             'akuntan' => 'Akuntan',
-            'verval' => 'Verval',
-            'head' => 'Head',
+            'verval' => 'Wakil Yayasan',
+            'head' => 'Kepala SPPG',
             default => ucfirst((string) $this->last_rejected_by_role),
         };
     }
@@ -58,10 +58,10 @@ class PurchaseOrder extends Model
     {
         return [
             self::STATUS_DRAFTED => 'Drafted',
-            self::STATUS_REQUESTED => 'Requested',
+            self::STATUS_RECEIVED => 'Penerimaan Barang',
             self::STATUS_APPROVED_AKUNTAN => 'Approved by Akuntan',
-            self::STATUS_APPROVED_VERVAL => 'Approved by Verval',
-            self::STATUS_APPROVED_HEAD => 'Approved by Head',
+            self::STATUS_APPROVED_VERVAL => 'Approved by Perwakilan Yayasan',
+            self::STATUS_APPROVED_HEAD => 'Approved by Kepala SPPG',
         ];
     }
 
@@ -76,7 +76,7 @@ class PurchaseOrder extends Model
     {
         return match ((int) $this->status) {
             self::STATUS_DRAFTED => 'badge-secondary',
-            self::STATUS_REQUESTED => 'badge-warning',
+            self::STATUS_RECEIVED => 'badge-warning',
             self::STATUS_APPROVED_AKUNTAN => 'badge-info',
             self::STATUS_APPROVED_VERVAL => 'badge-primary',
             self::STATUS_APPROVED_HEAD => 'badge-success',

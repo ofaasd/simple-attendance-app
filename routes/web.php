@@ -12,6 +12,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemVendorController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\CashInController;
 use App\Http\Controllers\LaporanBahanBakuController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
@@ -88,6 +89,34 @@ Route::middleware('auth')->group(function () {
     Route::post('purchase-order/{purchaseOrder}/review/{stage}', [PurchaseOrderController::class, 'review'])
         ->whereIn('stage', ['akuntan', 'verval', 'head'])
         ->name('purchase_order.review');
+    Route::get('cash-in/get_table', [CashInController::class, 'get_table'])->name('cash_in.get_table');        
+    Route::resource('cash-in', CashInController::class)->except(['edit', 'update', 'destroy'])->parameters(['cash-in' => 'cashIn'])->names([
+        'index' => 'cash_in',
+        'create' => 'cash_in.create',
+        'store' => 'cash_in.store',
+    ]);
+    
+    Route::get('cash-out/get_table', [App\Http\Controllers\CashOutController::class, 'get_table'])->name('cash_out.get_table');
+    Route::get('cash-out', [App\Http\Controllers\CashOutController::class, 'index'])->name('cash_out');
+    
+    Route::post('penerima-manfaat/import', [App\Http\Controllers\PenerimaManfaatController::class, 'import'])->name('penerima_manfaat.import');
+    Route::resource('penerima-manfaat', App\Http\Controllers\PenerimaManfaatController::class)->names([
+        'index' => 'penerima_manfaat.index',
+        'store' => 'penerima_manfaat.store',
+        'update' => 'penerima_manfaat.update',
+        'destroy' => 'penerima_manfaat.destroy',
+    ])->except(['create', 'show', 'edit']);
+
+    Route::get('distribusi-menu/get_table', [App\Http\Controllers\DistribusiMenuController::class, 'get_table'])->name('distribusi_menu.get_table');
+    Route::resource('distribusi-menu', App\Http\Controllers\DistribusiMenuController::class)->names([
+        'index' => 'distribusi_menu.index',
+        'create' => 'distribusi_menu.create',
+        'store' => 'distribusi_menu.store',
+        'edit' => 'distribusi_menu.edit',
+        'update' => 'distribusi_menu.update',
+        'destroy' => 'distribusi_menu.destroy',
+    ])->except(['show']);
+
     Route::get('laporan-bahan-baku', [LaporanBahanBakuController::class, 'index'])->name('laporan_bahan_baku.index');
     Route::get('laporan-bahan-baku/create', [LaporanBahanBakuController::class, 'create'])->name('laporan_bahan_baku.create');
     Route::post('laporan-bahan-baku/generate', [LaporanBahanBakuController::class, 'generate'])->name('laporan_bahan_baku.generate');

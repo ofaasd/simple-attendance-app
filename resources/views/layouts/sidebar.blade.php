@@ -44,8 +44,8 @@
               </p>
             </a>
           </li>
-          <li class="nav-item {{ request()->routeIs('item') || request()->routeIs('item.*') ||  request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('item') || request()->routeIs('item.*') ||  request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 Master Data
@@ -77,10 +77,16 @@
                   <p>Kategori</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{route('penerima_manfaat.index')}}" class="nav-link {{ request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Penerima Manfaat</p>
+                </a>
+              </li>
             </ul>
           </li> 
-          <li class="nav-item {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 SPPG
@@ -104,6 +110,24 @@
                 <a href="{{route('purchase_order')}}" class="nav-link {{ request()->routeIs('purchase_order*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Purchase Order</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('cash_in')}}" class="nav-link {{ request()->routeIs('cash_in*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Cash In</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('cash_out')}}" class="nav-link {{ request()->routeIs('cash_out*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Cash Out</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('distribusi_menu.index')}}" class="nav-link {{ request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Distribusi Menu</p>
                 </a>
               </li>
             </ul>
@@ -135,8 +159,8 @@
               </p>
             </a>
           </li>
-          <li class="nav-item {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 SPPG
@@ -190,6 +214,29 @@
                 <a href="{{route('vendor')}}" class="nav-link {{ request()->routeIs('vendor*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Vendor</p>
+                </a>
+              </li>              <li class="nav-item">
+                <a href="{{route('cash_in')}}" class="nav-link {{ request()->routeIs('cash_in*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Cash In</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('cash_out')}}" class="nav-link {{ request()->routeIs('cash_out*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Cash Out</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('penerima_manfaat.index')}}" class="nav-link {{ request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Penerima Manfaat</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('distribusi_menu.index')}}" class="nav-link {{ request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Distribusi Menu</p>
                 </a>
               </li>
             </ul>

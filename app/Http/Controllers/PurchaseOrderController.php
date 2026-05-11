@@ -19,11 +19,11 @@ use Illuminate\Validation\Rule;
 class PurchaseOrderController extends Controller
 {
     private const EMPLOYEE_ROLE_ID = 1;
-    private const STATUS_DRAFT = 1;
-    private const STATUS_REQUESTED = 2;
-    private const STATUS_APPROVED_AKUNTAN = 3;
-    private const STATUS_APPROVED_VERVAL = 4;
-    private const STATUS_APPROVED_HEAD = 5;
+    private const STATUS_DRAFT = 0;
+    private const STATUS_RECEIVED = 1;
+    private const STATUS_APPROVED_AKUNTAN = 2;
+    private const STATUS_APPROVED_VERVAL = 3;
+    private const STATUS_APPROVED_HEAD = 4;
 
     private function getSppgOptions()
     {
@@ -104,7 +104,7 @@ class PurchaseOrderController extends Controller
         return match ($stage) {
             'akuntan' => [
                 'role' => 'akuntan',
-                'expected_status' => self::STATUS_REQUESTED,
+                'expected_status' => self::STATUS_RECEIVED,
                 'approved_status' => self::STATUS_APPROVED_AKUNTAN,
                 'comment_field' => 'akuntan_comment',
             ],
@@ -228,10 +228,6 @@ class PurchaseOrderController extends Controller
     {
         if (!$this->isEmployeeRoleOne()) {
             abort(403, 'Halaman penerimaan barang hanya bisa diakses role employee (role 1).');
-        }
-
-        if ((int) $purchaseOrder->status < self::STATUS_APPROVED_AKUNTAN) {
-            abort(403, 'Halaman penerimaan barang hanya bisa diakses setelah PO disetujui Akuntan.');
         }
 
         $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
@@ -747,9 +743,14 @@ class PurchaseOrderController extends Controller
             'realized_prices.*' => 'nullable|numeric|min:0',
             'vendor_receipts' => 'array',
             'vendor_receipts.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'status' => ['required', 'in:0,1,2,3,4'],
         ]);
 
-        DB::transaction(function () use ($request, $purchaseOrder, $detailIds, $vendorIds) {
+        $newStatus = (int) $request->input('status');
+
+        DB::transaction(function () use ($request, $purchaseOrder, $detailIds, $vendorIds, $newStatus) {
+            $totalRealisasi = 0;
+
             foreach ($purchaseOrder->details as $detail) {
                 if (!in_array((int) $detail->id, $detailIds, true)) {
                     continue;
@@ -760,14 +761,19 @@ class PurchaseOrderController extends Controller
 
                 $qtyDiterima = $receivedQty === null || $receivedQty === '' ? null : (float) $receivedQty;
                 $hargaRealisasi = $realizedPrice === null || $realizedPrice === '' ? null : (float) $realizedPrice;
+                $subtotalRealisasi = ($qtyDiterima !== null && $hargaRealisasi !== null)
+                    ? $qtyDiterima * $hargaRealisasi
+                    : null;
 
                 $detail->update([
                     'qty_diterima' => $qtyDiterima,
                     'harga_realisasi' => $hargaRealisasi,
-                    'subtotal_realisasi' => ($qtyDiterima !== null && $hargaRealisasi !== null)
-                        ? $qtyDiterima * $hargaRealisasi
-                        : null,
+                    'subtotal_realisasi' => $subtotalRealisasi,
                 ]);
+
+                if ($subtotalRealisasi !== null) {
+                    $totalRealisasi += $subtotalRealisasi;
+                }
             }
 
             foreach ($vendorIds as $vendorId) {
@@ -788,7 +794,29 @@ class PurchaseOrderController extends Controller
                     ['nota_path' => $path]
                 );
             }
+
+            $oldStatus = (int) $purchaseOrder->status;
+            $purchaseOrder->update(['status' => $newStatus]);
+
+            // Deduct saldo if status becomes 4
+            if ($newStatus === 4 && $oldStatus !== 4) {
+                $purchaseOrder->sppg->decrement('saldo', $totalRealisasi);
+
+                \App\Models\CashOut::create([
+                    'jenis_cashout_id' => 1,
+                    'sppg_id' => $purchaseOrder->sppg_id,
+                    'nominal' => $totalRealisasi,
+                    'tanggal' => now()->toDateString(),
+                    'keterangan' => 'di generate oleh sistem setelah PO disetujui kepala SPPG',
+                ]);
+            }
         });
+
+        if ($newStatus === 4) {
+            return redirect()
+                ->route('purchase_order')
+                ->with('success', 'Penerimaan barang diselesaikan dan saldo SPPG telah dipotong.');
+        }
 
         return redirect()
             ->route('purchase_order.received', $purchaseOrder->id)
@@ -1070,12 +1098,12 @@ class PurchaseOrderController extends Controller
         }
 
         $purchaseOrder->update([
-            'status' => self::STATUS_REQUESTED,
+            'status' => self::STATUS_RECEIVED,
             'last_rejection_comment' => null,
             'last_rejected_by_role' => null,
         ]);
 
-        return redirect()->route('purchase_order')->with('success', 'Purchase Order ' . $purchaseOrder->kode_po . ' berhasil diajukan ke Akuntan.');
+        return redirect()->route('purchase_order')->with('success', 'Purchase Order ' . $purchaseOrder->kode_po . ' berhasil ditandai sebagai Penerimaan Barang.');
     }
 
     public function review(Request $request, PurchaseOrder $purchaseOrder, string $stage)
@@ -1119,6 +1147,19 @@ class PurchaseOrderController extends Controller
         }
 
         $purchaseOrder->update($payload);
+
+        if ($action === 'approve' && isset($payload['status']) && $payload['status'] === self::STATUS_APPROVED_HEAD) {
+            $totalRealisasi = $purchaseOrder->details()->sum('subtotal_realisasi') ?? 0;
+            $purchaseOrder->sppg->decrement('saldo', $totalRealisasi);
+
+            \App\Models\CashOut::create([
+                'jenis_cashout_id' => 1,
+                'sppg_id' => $purchaseOrder->sppg_id,
+                'nominal' => $totalRealisasi,
+                'tanggal' => now()->toDateString(),
+                'keterangan' => 'di generate oleh sistem setelah PO disetujui kepala SPPG',
+            ]);
+        }
 
         if ($action === 'approve') {
             return redirect()->route('purchase_order')->with('success', 'Purchase Order ' . $purchaseOrder->kode_po . ' berhasil disetujui oleh ' . ucfirst($config['role']) . '.');

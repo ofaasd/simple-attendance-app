@@ -9,6 +9,19 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      @role('employee')
+      <li class="nav-item">
+        <a class="nav-link" href="#" role="button" title="Total Saldo">
+          <i class="fas fa-wallet"></i>
+          <span class="badge badge-success">
+            @php
+              $sppg = \App\Models\Sppg::where('user_id', Auth::id())->first();
+            @endphp
+            Rp {{ number_format($sppg->saldo, 0, ',', '.') }}
+          </span>
+        </a>
+      </li>
+      @endrole
       <!-- Navbar Search -->
       <li class="nav-item">
         <a class="nav-link" data-widget="navbar-search" href="#" role="button">

@@ -29,6 +29,11 @@
                     <div class="card-header">
                         <h3 class="card-title mb-0">Informasi Purchase Order</h3>
                         <div class="card-tools">
+                            @if(auth()->user()->hasRole('employee'))
+                                <a href="{{ route('purchase_order.received', $purchaseOrder->id) }}" class="btn btn-warning btn-sm mr-2">
+                                    <i class="fas fa-box-open mr-1"></i> Penerimaan Barang
+                                </a>
+                            @endif
                             <a href="{{ route('purchase_order.download_pdf', $purchaseOrder->id) }}" class="btn btn-danger btn-sm">
                                 <i class="fas fa-file-pdf mr-1"></i> Download Semua PO
                             </a>
@@ -56,24 +61,31 @@
                             </div>
                         </div>
                         <div class="row mt-2">
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <strong>Periode Menu</strong>
                                 <div>{{ optional($purchaseOrder->tanggal_menu_dari)->format('d M Y') ?? '-' }} s/d {{ optional($purchaseOrder->tanggal_menu_sampai)->format('d M Y') ?? '-' }}</div>
                             </div>
-                            <div class="col-md-4 mb-2">
-                                <strong>Total Bayar</strong>
-                                <div>Rp {{ number_format((float) $purchaseOrder->total_bayar, 2, ',', '.') }}</div>
-                            </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <strong>Jumlah Item</strong>
                                 <div>{{ $purchaseOrder->details->count() }}</div>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <strong>Total Estimasi (PO)</strong>
+                                <div>Rp {{ number_format((float) $purchaseOrder->total_bayar, 2, ',', '.') }}</div>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <strong>Grand Total Realisasi</strong>
+                                <div>
+                                    @php $grandTotalRealisasi = $purchaseOrder->details->sum('subtotal_realisasi'); @endphp
+                                    Rp {{ number_format((float) $grandTotalRealisasi, 2, ',', '.') }}
+                                </div>
                             </div>
                         </div>
 
                         @php
                             $reviewStage = null;
 
-                            if (auth()->user()->hasRole('akuntan') && (int) $purchaseOrder->status === \App\Models\PurchaseOrder::STATUS_REQUESTED) {
+                            if (auth()->user()->hasRole('akuntan') && (int) $purchaseOrder->status === \App\Models\PurchaseOrder::STATUS_RECEIVED) {
                                 $reviewStage = 'akuntan';
                             } elseif (auth()->user()->hasRole('verval') && (int) $purchaseOrder->status === \App\Models\PurchaseOrder::STATUS_APPROVED_AKUNTAN) {
                                 $reviewStage = 'verval';

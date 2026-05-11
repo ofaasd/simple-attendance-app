@@ -65,20 +65,23 @@
             <tr>
                 <th class="col-no">NO.</th>
                 <th class="col-name">JENIS BAHAN</th>
-                <th class="col-qty">JUMLAH</th>
                 <th class="col-unit">SATUAN</th>
-                <th colspan="2" class="col-price">ESTIMASI HARGA</th>
-                <th colspan="2" class="col-delivery">KIRIM</th>
+                <th class="col-qty text-center">QTY (EST)</th>
+                <th class="col-qty text-center">QTY (REAL)</th>
+                <th class="col-price text-right">HARGA (EST)</th>
+                <th class="col-price text-right">HARGA (REAL)</th>
+                <th class="col-price text-right">SUBTOTAL (REAL)</th>
             </tr>
             @forelse($details as $detailIndex => $detail)
                 <tr>
                     <td class="text-center">{{ $detailIndex + 1 }}</td>
                     <td>{{ $detail->item_name }}</td>
-                    <td class="text-right">{{ rtrim(rtrim(number_format((float) $detail->qty, 2, ',', '.'), '0'), ',') }}</td>
                     <td>{{ $detail->item_satuan }}</td>
-                    <td class="currency-cell">Rp</td>
-                    <td class="text-right">{{ number_format((float) $detail->harga, 2, ',', '.') }}</td>
-                    <td colspan="2" class="delivery-cell">{{ $deliveryMethod }}</td>
+                    <td class="text-center">{{ rtrim(rtrim(number_format((float) $detail->qty, 2, ',', '.'), '0'), ',') }}</td>
+                    <td class="text-center">{{ $detail->qty_diterima !== null ? rtrim(rtrim(number_format((float) $detail->qty_diterima, 2, ',', '.'), '0'), ',') : '-' }}</td>
+                    <td class="text-right">Rp {{ number_format((float) $detail->harga, 2, ',', '.') }}</td>
+                    <td class="text-right">{{ $detail->harga_realisasi !== null ? 'Rp ' . number_format((float) $detail->harga_realisasi, 2, ',', '.') : '-' }}</td>
+                    <td class="text-right">{{ $detail->subtotal_realisasi !== null ? 'Rp ' . number_format((float) $detail->subtotal_realisasi, 2, ',', '.') : '-' }}</td>
                 </tr>
             @empty
                 <tr>
@@ -86,10 +89,12 @@
                 </tr>
             @endforelse
             <tr>
-                <td colspan="4" class="total-label">TOTAL</td>
-                <td class="currency-cell total-value">Rp</td>
-                <td class="text-right total-value">{{ number_format((float) $group['total'], 2, ',', '.') }}</td>
-                <td colspan="2"></td>
+                <td colspan="7" class="total-label">TOTAL ESTIMASI</td>
+                <td class="text-right total-value">Rp {{ number_format((float) $group['total'], 2, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td colspan="7" class="total-label">GRAND TOTAL REALISASI</td>
+                <td class="text-right total-value">Rp {{ number_format((float) $details->sum('subtotal_realisasi'), 2, ',', '.') }}</td>
             </tr>
         </table>
     </div>
