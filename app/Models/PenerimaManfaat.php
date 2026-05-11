@@ -19,7 +19,10 @@ class PenerimaManfaat extends Model
         'no_telp',
         'pic',
     ];
-
+    public function sppg()
+    {
+        return $this->belongsTo(Sppg::class, 'sppg_id');
+    }
     public function distribusiDetails()
     {
         return $this->hasMany(DistribusiDetail::class, 'id_penerima_manfaat');

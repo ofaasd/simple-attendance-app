@@ -6,13 +6,21 @@ use App\Models\PenerimaManfaat;
 use App\Imports\PenerimaManfaatImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
 class PenerimaManfaatController extends Controller
 {
     public function index()
     {
         $title = 'Penerima Manfaat';
-        $penerimaManfaat = PenerimaManfaat::all();
+        $penerimaManfaat = PenerimaManfaat::with('sppg')
+            ->when(Auth::user()->hasRole('perwakilan yayasan'), function ($q) {
+                $q->whereHas('sppg', function ($s) {
+                    $s->where('user_id', Auth::id());
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->get();
         return view('penerima_manfaat.index', compact('title', 'penerimaManfaat'));
     }
 
