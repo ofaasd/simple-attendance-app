@@ -16,8 +16,8 @@ use App\Http\Controllers\CashInController;
 use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\LaporanBahanBakuController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
-use Itstructure\LaRbac\Http\Controllers\{UserController, RoleController, PermissionController};
 
 /*
 |--------------------------------------------------------------------------
@@ -46,12 +46,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('user/get_table', [user::class, 'get_table'])->name('user.get_table');
+    Route::get('user/role/get_table', [RoleController::class, 'get_table'])->name('user.role.get_table');
 
     Route::get('working/get_table', [WorkingHourController::class, 'get_table'])->name('working.get_table');
 
     Route::get('attendance/report', [PresenceController::class,'report'])->name('attendance_report');
     Route::get('attendance/log', [PresenceController::class,'log'])->name('attendance_log');
 
+    
+    Route::resource('user/role', RoleController::class)->parameters(['user/role' => 'role'])->names([
+        'index' => 'user.role.index',
+        'create' => 'user.role.create',
+        'store' => 'user.role.store',
+        'show' => 'user.role.show',
+        'edit' => 'user.role.edit',
+        'update' => 'user.role.update',
+        'destroy' => 'user.role.destroy',
+    ]);
     Route::resource('user', user::class)->name('index','user');
     Route::resource('working', WorkingHourController::class)->name('index','working');
     Route::resource('attendance', PresenceController::class)->name('index','attendance');

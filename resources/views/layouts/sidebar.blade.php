@@ -305,13 +305,28 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{{route('user')}}" class="nav-link {{(Route::currentRouteName() == "user")?"active":""}}" >
+          <li class="nav-item {{ request()->routeIs('user') || request()->routeIs('user.*') || request()->routeIs('user.role.*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('user') || request()->routeIs('user.*') || request()->routeIs('user.role.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-user"></i>
               <p>
                 User Management
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ route('user') }}" class="nav-link {{ request()->routeIs('user') || request()->routeIs('user.index') || request()->routeIs('user.create') || request()->routeIs('user.edit') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>User</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('user.role.index') }}" class="nav-link {{ request()->routeIs('user.role.*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Role</p>
+                </a>
+              </li>
+            </ul>
           </li>
           @endrole
           <li class="nav-item">
