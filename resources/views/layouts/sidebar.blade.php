@@ -170,14 +170,7 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{{route('user')}}" class="nav-link {{(Route::currentRouteName() == "user")?"active":""}}" >
-              <i class="nav-icon fas fa-user"></i>
-              <p>
-                Employee
-              </p>
-            </a>
-          </li>
+          
 
           <li class="nav-item">
             <a href="{{route('working')}}" class="nav-link {{(Route::currentRouteName() == "working")?"active":""}}" >
@@ -309,6 +302,14 @@
               <i class="nav-icon fas fa-sticky-note"></i>
               <p>
                 Attendance Log
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{route('user')}}" class="nav-link {{(Route::currentRouteName() == "user")?"active":""}}" >
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                User Management
               </p>
             </a>
           </li>

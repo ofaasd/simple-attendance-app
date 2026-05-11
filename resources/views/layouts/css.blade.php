@@ -30,3 +30,16 @@
 
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="{{asset('plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
+
+  <!-- Force remove any overlays -->
+  <style>
+    .modal-backdrop, .overlay, .preloader {
+      display: none !important;
+    }
+    body.hold-transition .wrapper {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+  </style>
+
+

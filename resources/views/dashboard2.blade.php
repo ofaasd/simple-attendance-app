@@ -36,6 +36,7 @@
                             @forelse($sppgList as $sppg)
                                 @php
                                     $po = $sppg->latestPurchaseOrder;
+                                    $distribusi = $latestDistribusi[$sppg->id] ?? null;
                                     $statusText = 'Belum ada PO';
                                     $statusClass = 'badge-secondary';
 
@@ -59,6 +60,10 @@
                                             <strong>{{ $sppg->nama }}</strong>
                                         </div>
                                         <div class="card-body p-2">
+                                            <!-- Saldo Saat Ini -->
+                                            <div class="small text-muted mb-1">Saldo Saat Ini</div>
+                                            <div class="mb-2"><strong class="text-success">Rp {{ number_format((float) $sppg->saldo, 0, ',', '.') }}</strong></div>
+
                                             @if($po)
                                                 <div class="small text-muted mb-1">PO Terbaru</div>
                                                 <div><strong>{{ $po->kode_po ?? '-' }}</strong></div>
@@ -66,6 +71,28 @@
                                                 <div class="small mb-2">Total: Rp {{ number_format((float) $po->total_bayar, 0, ',', '.') }}</div>
                                             @else
                                                 <div class="small text-muted mb-2">Belum ada purchase order.</div>
+                                            @endif
+
+                                            @if($distribusi)
+                                                <div class="small text-muted mb-1">Distribusi Terbaru</div>
+                                                <div><strong>{{ optional($distribusi->menu)->nama ?? '-' }}</strong></div>
+                                                <div class="small mb-1">Tanggal: {{ optional($distribusi->tanggal_pengiriman)->format('d M Y') ?? '-' }}</div>
+                                                <div class="small mb-2">
+                                                    Status:
+                                                    @php
+                                                        $distStatus = $distribusi->status;
+                                                        $distStatusClasses = [
+                                                            'on progress' => 'badge-secondary',
+                                                            'on delivery' => 'badge-info',
+                                                            'done' => 'badge-success',
+                                                        ];
+                                                    @endphp
+                                                    <span class="badge {{ $distStatusClasses[$distStatus] ?? 'badge-dark' }}">
+                                                        {{ ucfirst($distStatus) }}
+                                                    </span>
+                                                </div>
+                                            @else
+                                                <div class="small text-muted mb-2">Belum ada distribusi.</div>
                                             @endif
 
                                             <div class="d-flex justify-content-between align-items-center mt-2">

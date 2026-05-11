@@ -14,12 +14,8 @@
         <!-- Scripts -->
         @include('layouts.css')
     </head>
-    <body class="hold-transition sidebar-mini layout-fixed">
+    <body class="sidebar-mini">
         <div class="wrapper">
-            <!-- Preloader -->
-            <div class="preloader flex-column justify-content-center align-items-center">
-                <img class="animation__shake" src="{{asset('dist/img/AdminLTELogo.png')}}" alt="AdminLTELogo" height="60" width="60">
-            </div>
             @include('layouts.navbar')
             @include('layouts.sidebar')
 
@@ -37,9 +33,26 @@
                 </div>
             </footer>
         </div>
+
+            <!-- Page Content -->
+            {{-- <main>
+                {{ $slot }}
+            </main> --}}
+            <footer class="main-footer">
+                <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+                All rights reserved.
+                <div class="float-right d-none d-sm-inline-block">
+                  <b>Version</b> 3.2.0
+                </div>
+            </footer>
+        </div>
         @include('layouts.script')
         <script>
-            $(function(){
+            $(document).ready(function(){
+                // Force remove any overlay or backdrop
+                $('body').removeClass('hold-transition');
+                $('.modal-backdrop, .overlay, .preloader').remove();
+
                 $(".logout").click(function(){
                     $.post('{{url('logout')}}',{ '_token': '{{csrf_token()}}' }, function (data){
                         window.location = "{{url('dashboard')}}"

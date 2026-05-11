@@ -16,9 +16,24 @@ class DashboardController extends Controller
     //
     public function index_hr(){
         $month = array(1=>'January','February','March','April','May','June','July','August','September','Oktober','November','December');
+
+        // Get SPPG list with latest PO and latest distribusi
         $sppgList = Sppg::with(['latestPurchaseOrder'])->orderBy('nama')->get();
 
-        return view('dashboard2',compact('month','sppgList'));
+        // Get latest distribusi for each SPPG
+        $latestDistribusi = [];
+        foreach ($sppgList as $sppg) {
+            $distribusi = DistribusiMenu::with('menu')
+                ->whereHas('menu', function ($query) use ($sppg) {
+                    $query->where('sppg_id', $sppg->id);
+                })
+                ->orderByDesc('tanggal_pengiriman')
+                ->first();
+
+            $latestDistribusi[$sppg->id] = $distribusi;
+        }
+
+        return view('dashboard2', compact('month', 'sppgList', 'latestDistribusi'));
     }
     public function index(){
         $attendanceHistory = Presence::where('user_id', Auth::id())
