@@ -2,8 +2,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
-      <img src="{{asset('dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+      <img src="{{ asset('/img/logo_kampi.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">SI-KAMPI <b>MONEV</b></span>
     </a>
 
     <!-- Sidebar -->
@@ -11,7 +11,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="{{asset('dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
+          <img src="{{ Auth::user()->profile_photo_path ? asset(Auth::user()->profile_photo_path) : asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="#" class="d-block">{{Auth::user()->name}}</a>
@@ -44,6 +44,16 @@
               </p>
             </a>
           </li>
+          @role('employee|hr')
+          <li class="nav-item">
+            <a href="{{route('attendance')}}" class="nav-link {{(Route::currentRouteName() == "attendance")?"active":""}}" >
+              <i class="nav-icon fas fa-pen-square"></i>
+              <p>
+                Attendance
+              </p>
+            </a>
+          </li>
+          @endrole
           <li class="nav-item {{ request()->routeIs('item') || request()->routeIs('item.*') ||  request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') ? 'menu-open' : '' }}">
             <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
@@ -85,8 +95,8 @@
               </li>
             </ul>
           </li> 
-          <li class="nav-item {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 SPPG
@@ -112,22 +122,40 @@
                   <p>Purchase Order</p>
                 </a>
               </li>
+              
+              <li class="nav-item">
+                <a href="{{route('distribusi_menu.index')}}" class="nav-link {{ request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Distribusi Menu</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item {{ request()->routeIs('item') || request()->routeIs('item.*') ||  request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-building"></i>
+              <p>
+                Cashflow
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="{{route('cash_in')}}" class="nav-link {{ request()->routeIs('cash_in*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Cash In</p>
                 </a>
               </li>
-              <li class="nav-item">
+                  <li class="nav-item">
                 <a href="{{route('cash_out')}}" class="nav-link {{ request()->routeIs('cash_out*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Cash Out</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{route('distribusi_menu.index')}}" class="nav-link {{ request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+                <a href="{{route('cashflow')}}" class="nav-link {{ request()->routeIs('cashflow*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Distribusi Menu</p>
+                  <p>Detail Cashflow</p>
                 </a>
               </li>
             </ul>
@@ -159,8 +187,8 @@
               </p>
             </a>
           </li>
-          <li class="nav-item {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 SPPG
@@ -228,6 +256,12 @@
                 </a>
               </li>
               <li class="nav-item">
+                <a href="{{route('cashflow')}}" class="nav-link {{ request()->routeIs('cashflow*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Cashflow</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="{{route('penerima_manfaat.index')}}" class="nav-link {{ request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Penerima Manfaat</p>
@@ -260,16 +294,7 @@
             </a>
           </li>
           @endrole
-          @role('employee|hr')
-          <li class="nav-item">
-            <a href="{{route('attendance')}}" class="nav-link {{(Route::currentRouteName() == "attendance")?"active":""}}" >
-              <i class="nav-icon fas fa-pen-square"></i>
-              <p>
-                Attendance
-              </p>
-            </a>
-          </li>
-          @endrole
+          
           @role('hr')
           <li class="nav-item">
             <a href="{{route('attendance_report')}}" class="nav-link {{(Route::currentRouteName() == "attendance_report")?"active":""}}" >
@@ -288,6 +313,14 @@
             </a>
           </li>
           @endrole
+          <li class="nav-item">
+            <a href="{{ route('profile.edit') }}" class="nav-link {{ (Route::currentRouteName() == 'profile.edit') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-user-cog"></i>
+              <p>
+                Profile
+              </p>
+            </a>
+          </li>
           <li class="nav-item">
             <a href="javascript:void(0)" class="nav-link logout" >
               <i class="nav-icon fas fa-key"></i>

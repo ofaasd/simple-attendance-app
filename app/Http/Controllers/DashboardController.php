@@ -7,9 +7,9 @@ use App\Models\Presence;
 use App\Models\Sppg;
 use App\Models\User;
 use App\Models\WorkingHour;
-use DateTime;
+use App\Models\DistribusiMenu;
+use App\Models\PurchaseOrder;
 use Illuminate\Support\Facades\Auth;
-
 
 class DashboardController extends Controller
 {
@@ -21,8 +21,47 @@ class DashboardController extends Controller
         return view('dashboard2',compact('month','sppgList'));
     }
     public function index(){
+        $attendanceHistory = Presence::where('user_id', Auth::id())
+            ->orderByDesc('day')
+            ->take(7)
+            ->get();
 
-        return view('dashboard');
+        $userSppgIds = Sppg::where('user_id', Auth::id())->pluck('id');
+
+        $currentBalance = Sppg::where('user_id', Auth::id())->sum('saldo');
+
+        $completedDistribusiCount = DistribusiMenu::whereHas('menu.sppg', function ($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->where('status', 'done')
+            ->count();
+
+        $completedPoCount = PurchaseOrder::where('status', PurchaseOrder::STATUS_APPROVED_HEAD)
+            ->whereIn('sppg_id', $userSppgIds)
+            ->count();
+
+        $recentDistribusi = DistribusiMenu::with(['menu.sppg'])
+            ->whereHas('menu.sppg', function ($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->orderByDesc('tanggal_pengiriman')
+            ->take(5)
+            ->get();
+
+        $recentPurchaseOrders = PurchaseOrder::with('sppg')
+            ->whereIn('sppg_id', $userSppgIds)
+            ->orderByDesc('tanggal_po')
+            ->take(5)
+            ->get();
+
+        return view('dashboard', compact(
+            'attendanceHistory',
+            'recentDistribusi',
+            'recentPurchaseOrders',
+            'currentBalance',
+            'completedDistribusiCount',
+            'completedPoCount'
+        ));
     }
     public function get_daily(Request $request){
         $tanggal = $request->tanggal;

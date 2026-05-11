@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'nik',
+        'profile_photo_path',
     ];
 
     /**

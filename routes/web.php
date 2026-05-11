@@ -13,6 +13,7 @@ use App\Http\Controllers\ItemVendorController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\CashInController;
+use App\Http\Controllers\CashFlowController;
 use App\Http\Controllers\LaporanBahanBakuController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
@@ -98,6 +99,9 @@ Route::middleware('auth')->group(function () {
     
     Route::get('cash-out/get_table', [App\Http\Controllers\CashOutController::class, 'get_table'])->name('cash_out.get_table');
     Route::get('cash-out', [App\Http\Controllers\CashOutController::class, 'index'])->name('cash_out');
+
+    Route::get('cashflow/get_table', [CashFlowController::class, 'get_table'])->name('cashflow.get_table');
+    Route::get('cashflow', [CashFlowController::class, 'index'])->name('cashflow');
     
     Route::post('penerima-manfaat/import', [App\Http\Controllers\PenerimaManfaatController::class, 'import'])->name('penerima_manfaat.import');
     Route::resource('penerima-manfaat', App\Http\Controllers\PenerimaManfaatController::class)->names([

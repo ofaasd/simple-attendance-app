@@ -2,11 +2,11 @@
     <!-- Session Status -->
     <div class="card card-outline card-primary">
         <div class="card-header text-center">
-          <a href="../../index2.html" class="h1"><b>Admin</b>LTE</a>
+          <img src="{{ asset('/img/logo_kampi.png') }}" alt="Logo Kampi" class="h-32 w-auto" style="height:140px !important;">
         </div>
         <div class="card-body">
           <x-auth-session-status class="mb-4" :status="session('status')" />
-          <p class="login-box-msg">Sign in to start your session</p>
+          <p class="login-box-msg">Silahakn Login untuk masuk ke <br /> <b style="font-size: 18px;">Sistem Informasi Monitoring dan Evaluasi SPPG</b></p>
           <form method="POST" action="{{ route('login') }}">
             @csrf
 
@@ -44,11 +44,7 @@
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
-                @endif
+               
 
                 <x-primary-button class="btn btn-primary btn-block">
                     {{ __('Log in') }}
