@@ -15,7 +15,7 @@ class CashInController extends Controller
         $title = 'Cash In';
         $tableUrl = url('cash-in/get_table');
 
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppg = $isEmployee ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get() : Sppg::orderBy('nama')->get();
 
         return view('cash_in.index', compact('title', 'tableUrl', 'sppg'));
@@ -24,7 +24,7 @@ class CashInController extends Controller
     public function get_table(Request $request)
     {
         $query = CashIn::with('sppg')
-            ->when(Auth::user()->hasRole\('perwakilan\ yayasan'\), function ($q) {
+            ->when(Auth::user()->hasRole('perwakilan yayasan'), function ($q) {
                 $q->whereHas('sppg', function ($s) {
                     $s->where('user_id', Auth::id());
                 });
@@ -49,7 +49,7 @@ class CashInController extends Controller
 
     public function create()
     {
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppg = $isEmployee ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get() : Sppg::orderBy('nama')->get();
 
         return view('cash_in.create', compact('sppg'));
@@ -66,7 +66,7 @@ class CashInController extends Controller
         ]);
 
         $sppgId = (int) $request->sppg_id;
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             $ownedSppg = Sppg::where('id', $sppgId)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);

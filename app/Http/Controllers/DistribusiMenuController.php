@@ -17,7 +17,7 @@ class DistribusiMenuController extends Controller
     {
         $title = 'Distribusi Menu';
         
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppgList = $isEmployee ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get() : Sppg::orderBy('nama')->get();
 
         return view('distribusi_menu.index', compact('title', 'sppgList'));
@@ -27,7 +27,7 @@ class DistribusiMenuController extends Controller
     {
         $query = DistribusiMenu::with(['menu.sppg', 'distribusiDetails.penerimaManfaat']);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             $query->whereHas('menu.sppg', function ($q) {
                 $q->where('user_id', Auth::id());
             });
@@ -57,7 +57,7 @@ class DistribusiMenuController extends Controller
     {
         $title = 'Tambah Distribusi Menu';
         
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppgQuery = $isEmployee ? Sppg::where('user_id', Auth::id()) : Sppg::query();
         $sppgIds = $sppgQuery->pluck('id');
 
@@ -123,7 +123,7 @@ class DistribusiMenuController extends Controller
     {
         $title = 'Edit Distribusi Menu';
         
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppgQuery = $isEmployee ? Sppg::where('user_id', Auth::id()) : Sppg::query();
         $sppgIds = $sppgQuery->pluck('id');
 

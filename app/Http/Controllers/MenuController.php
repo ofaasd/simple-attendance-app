@@ -13,7 +13,7 @@ class MenuController extends Controller
 {
     private function getMenuMasterData(): array
     {
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppg = $isEmployee
             ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get()
             : Sppg::orderBy('nama')->get();
@@ -32,7 +32,7 @@ class MenuController extends Controller
     private function getMenuBaseQuery()
     {
         return Menu::with(['sppg', 'kategori', 'items', 'detailMenus'])
-            ->when(Auth::user()->hasRole\('perwakilan\ yayasan'\), function ($q) {
+            ->when(Auth::user()->hasRole('perwakilan yayasan'), function ($q) {
                 $q->whereHas('sppg', function ($s) {
                     $s->where('user_id', Auth::id());
                 });
@@ -80,7 +80,7 @@ class MenuController extends Controller
             'tanggal' => 'required|date',
         ]);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             $ownedSppg = Sppg::where('id', $request->sppg_id)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);
@@ -107,7 +107,7 @@ class MenuController extends Controller
             'detail_menu_names.*' => 'required|string|max:255',
         ]);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             $ownedSppg = Sppg::where('id', $request->sppg_id)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);
@@ -163,7 +163,7 @@ class MenuController extends Controller
             'target_tanggal' => 'required|date|different:source_tanggal',
         ]);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             $ownedSppg = Sppg::where('id', $request->sppg_id)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);
@@ -215,7 +215,7 @@ class MenuController extends Controller
     {
         $menu = Menu::with(['items:id', 'detailMenus:id,id_menu,nama_detail_menu'])->findOrFail($id);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\) && optional($menu->sppg)->user_id !== Auth::id()) {
+        if (Auth::user()->hasRole('perwakilan yayasan') && optional($menu->sppg)->user_id !== Auth::id()) {
             return response()->json(['message' => 'Anda tidak memiliki akses ke data ini.'], 403);
         }
 
@@ -230,7 +230,7 @@ class MenuController extends Controller
     {
         $menu = Menu::findOrFail($id);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\) && optional($menu->sppg)->user_id !== Auth::id()) {
+        if (Auth::user()->hasRole('perwakilan yayasan') && optional($menu->sppg)->user_id !== Auth::id()) {
             return response()->json(['message' => 'Anda tidak memiliki akses ke data ini.'], 403);
         }
 

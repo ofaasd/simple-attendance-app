@@ -12,7 +12,7 @@ class KategoriController extends Controller
     public function index()
     {
         $title = 'Kategori Management';
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppg = $isEmployee
             ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get()
             : Sppg::orderBy('nama')->get();
@@ -23,7 +23,7 @@ class KategoriController extends Controller
     public function get_table()
     {
         $kategori = Kategori::with('sppg')
-            ->when(Auth::user()->hasRole\('perwakilan\ yayasan'\), function ($q) {
+            ->when(Auth::user()->hasRole('perwakilan yayasan'), function ($q) {
                 $q->whereHas('sppg', function ($s) {
                     $s->where('user_id', Auth::id());
                 });
@@ -41,7 +41,7 @@ class KategoriController extends Controller
             'nama' => 'required|string|max:255',
         ]);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             $ownedSppg = Sppg::where('id', $request->sppg_id)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);
@@ -63,7 +63,7 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::findOrFail($id);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\) && optional($kategori->sppg)->user_id !== Auth::id()) {
+        if (Auth::user()->hasRole('perwakilan yayasan') && optional($kategori->sppg)->user_id !== Auth::id()) {
             return response()->json(['message' => 'Anda tidak memiliki akses ke data ini.'], 403);
         }
 
@@ -74,7 +74,7 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::findOrFail($id);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\) && optional($kategori->sppg)->user_id !== Auth::id()) {
+        if (Auth::user()->hasRole('perwakilan yayasan') && optional($kategori->sppg)->user_id !== Auth::id()) {
             return response()->json(['message' => 'Anda tidak memiliki akses ke data ini.'], 403);
         }
 

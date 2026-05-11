@@ -14,7 +14,7 @@ class CashOutController extends Controller
         $title = 'Cash Out';
         $tableUrl = url('cash-out/get_table');
 
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppg = $isEmployee ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get() : Sppg::orderBy('nama')->get();
 
         return view('cash_out.index', compact('title', 'tableUrl', 'sppg'));
@@ -23,7 +23,7 @@ class CashOutController extends Controller
     public function get_table(Request $request)
     {
         $query = CashOut::with(['sppg', 'jenisCashout'])
-            ->when(Auth::user()->hasRole\('perwakilan\ yayasan'\), function ($q) {
+            ->when(Auth::user()->hasRole('perwakilan yayasan'), function ($q) {
                 $q->whereHas('sppg', function ($s) {
                     $s->where('user_id', Auth::id());
                 });

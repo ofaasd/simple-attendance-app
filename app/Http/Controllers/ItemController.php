@@ -25,7 +25,7 @@ class ItemController extends Controller
 
     private function getItemMasterData(): array
     {
-        $isEmployee = Auth::user()->hasRole\('perwakilan\ yayasan'\);
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppg = $isEmployee
             ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get()
             : Sppg::orderBy('nama')->get();
@@ -53,7 +53,7 @@ class ItemController extends Controller
     private function getItemBaseQuery()
     {
         return Item::with(['sppg', 'kategori', 'uom'])
-            ->when(Auth::user()->hasRole\('perwakilan\ yayasan'\), function ($q) {
+            ->when(Auth::user()->hasRole('perwakilan yayasan'), function ($q) {
                 $q->whereHas('sppg', function ($s) {
                     $s->where('user_id', Auth::id());
                 });
@@ -87,7 +87,7 @@ class ItemController extends Controller
             'uom_id' => 'required|exists:uom,id',
         ]);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             $ownedSppg = Sppg::where('id', $request->sppg_id)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke SPPG ini.'], 403);
@@ -124,7 +124,7 @@ class ItemController extends Controller
 
         $kategori = Kategori::findOrFail($request->kategori_id);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\)) {
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             $ownedSppg = Sppg::where('id', $kategori->sppg_id)->where('user_id', Auth::id())->exists();
             if (!$ownedSppg) {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke kategori ini.'], 403);
@@ -239,7 +239,7 @@ class ItemController extends Controller
     {
         $item = Item::findOrFail($id);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\) && optional($item->sppg)->user_id !== Auth::id()) {
+        if (Auth::user()->hasRole('perwakilan yayasan') && optional($item->sppg)->user_id !== Auth::id()) {
             return response()->json(['message' => 'Anda tidak memiliki akses ke data ini.'], 403);
         }
 
@@ -250,7 +250,7 @@ class ItemController extends Controller
     {
         $item = Item::findOrFail($id);
 
-        if (Auth::user()->hasRole\('perwakilan\ yayasan'\) && optional($item->sppg)->user_id !== Auth::id()) {
+        if (Auth::user()->hasRole('perwakilan yayasan') && optional($item->sppg)->user_id !== Auth::id()) {
             return response()->json(['message' => 'Anda tidak memiliki akses ke data ini.'], 403);
         }
 
