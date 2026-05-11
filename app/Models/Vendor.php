@@ -30,5 +30,9 @@ class Vendor extends Model
     {
         return $this->hasMany(ItemVendor::class, 'vendor_id');
     }
+    public function sppg()
+    {
+        return $this->belongsTo(Sppg::class, 'sppg_id');
+    }
 }
 

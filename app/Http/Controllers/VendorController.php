@@ -18,7 +18,14 @@ class VendorController extends Controller
 
     public function get_table()
     {
-        $vendor = Vendor::orderBy('id', 'desc')->get();
+        $vendor = Vendor::with('sppg')
+            ->when(Auth::user()->hasRole('perwakilan yayasan'), function ($q) {
+                $q->whereHas('sppg', function ($s) {
+                    $s->where('user_id', Auth::id());
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->get();
         $no = 0;
         return view('vendor.table', compact('vendor', 'no'));
     }
