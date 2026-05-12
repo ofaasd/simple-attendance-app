@@ -11,13 +11,19 @@
     <ul class="navbar-nav ml-auto">
       @role('perwakilan yayasan')
       <li class="nav-item">
-        <a class="nav-link" href="#" role="button" title="Total Saldo">
+        <a class="nav-link" href="#" role="button" title="Net Cashflow">
           <i class="fas fa-wallet"></i>
           <span class="badge badge-success">
             @php
-              $sppgSaldo = Auth::user()->sppgs()->sum('saldo');
+              $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
+              $sppgIds = $isEmployee
+                  ? Auth::user()->sppgs()->pluck('sppg.id')->all()
+                  : \App\Models\Sppg::pluck('id')->all();
+              $totalCashIn = \App\Models\CashIn::whereIn('sppg_id', $sppgIds)->sum('jumlah_dana');
+              $totalCashOut = \App\Models\CashOut::whereIn('sppg_id', $sppgIds)->sum('nominal');
+              $netCash = $totalCashIn - $totalCashOut;
             @endphp
-            Rp {{ number_format($sppgSaldo, 0, ',', '.') }}
+            Rp {{ number_format($netCash, 0, ',', '.') }}
           </span>
         </a>
       </li>
