@@ -29,7 +29,7 @@
                     <div class="card-header">
                         <h3 class="card-title mb-0">Informasi Purchase Order</h3>
                         <div class="card-tools">
-                            @if(auth()->user()->hasRole\('perwakilan\ yayasan'\))
+                            @if(auth()->user()->hasRole('perwakilan yayasan'))
                                 <a href="{{ route('purchase_order.received', $purchaseOrder->id) }}" class="btn btn-warning btn-sm mr-2">
                                     <i class="fas fa-box-open mr-1"></i> Penerimaan Barang
                                 </a>
