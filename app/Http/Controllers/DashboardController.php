@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\WorkingHour;
 use App\Models\DistribusiMenu;
 use App\Models\PurchaseOrder;
+use App\Models\CashIn;
+use App\Models\CashOut;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -46,9 +48,9 @@ class DashboardController extends Controller
             ? Auth::user()->sppgs()->pluck('sppg.id')
             : Sppg::pluck('id');
 
-        $currentBalance = $isEmployee
-            ? Auth::user()->sppgs()->sum('saldo')
-            : Sppg::sum('saldo');
+        $totalCashIn = CashIn::whereIn('sppg_id', $userSppgIds)->sum('jumlah_dana');
+        $totalCashOut = CashOut::whereIn('sppg_id', $userSppgIds)->sum('nominal');
+        $currentBalance = $totalCashIn - $totalCashOut;
 
         $completedDistribusiCount = DistribusiMenu::whereHas('menu.sppg', function ($query) use ($userSppgIds) {
                 $query->whereIn('id', $userSppgIds);

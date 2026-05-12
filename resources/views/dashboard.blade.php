@@ -65,6 +65,7 @@
                                 <i class="fas fa-file-check"></i>
                             </div>
                             <a href="{{ route('purchase_order') }}" class="small-box-footer">Lihat PO <i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="{{ route('distribusi_menu.index') }}" class="small-box-footer">Distribusi Menu Terbaru <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                 </div>
