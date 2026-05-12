@@ -131,8 +131,8 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item {{ request()->routeIs('item') || request()->routeIs('item.*') ||  request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 Cashflow
@@ -146,7 +146,7 @@
                   <p>Cash In</p>
                 </a>
               </li>
-                  <li class="nav-item">
+              <li class="nav-item">
                 <a href="{{route('cash_out')}}" class="nav-link {{ request()->routeIs('cash_out*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Cash Out</p>
@@ -180,8 +180,8 @@
               </p>
             </a>
           </li>
-          <li class="nav-item {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('sppg*') || request()->routeIs('item') || request()->routeIs('item.*') || request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('kategori*') || request()->routeIs('uom*') || request()->routeIs('vendor*') || request()->routeIs('penerima_manfaat*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 SPPG
@@ -236,7 +236,31 @@
                   <i class="far fa-circle nav-icon"></i>
                   <p>Vendor</p>
                 </a>
-              </li>              <li class="nav-item">
+              </li>
+              <li class="nav-item">
+                <a href="{{route('penerima_manfaat.index')}}" class="nav-link {{ request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Penerima Manfaat</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('distribusi_menu.index')}}" class="nav-link {{ request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Distribusi Menu</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item {{ request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-building"></i>
+              <p>
+                Cashflow
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
                 <a href="{{route('cash_in')}}" class="nav-link {{ request()->routeIs('cash_in*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Cash In</p>
@@ -252,18 +276,6 @@
                 <a href="{{route('cashflow')}}" class="nav-link {{ request()->routeIs('cashflow*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Cashflow</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{route('penerima_manfaat.index')}}" class="nav-link {{ request()->routeIs('penerima_manfaat*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Penerima Manfaat</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{route('distribusi_menu.index')}}" class="nav-link {{ request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Distribusi Menu</p>
                 </a>
               </li>
             </ul>

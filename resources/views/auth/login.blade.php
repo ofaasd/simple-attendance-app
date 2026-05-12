@@ -28,6 +28,9 @@
                                 name="password"
                                 required autocomplete="current-password" />
                 <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary" id="togglePassword" tabindex="-1">
+                        <i class="fas fa-eye"></i>
+                    </button>
                     <div class="input-group-text">
                         <span class="fas fa-lock"></span>
                     </div>
@@ -53,5 +56,19 @@
            </form>
         </div>
     </div>
-</x-guest-layout>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var togglePassword = document.getElementById('togglePassword');
+        var passwordInput = document.getElementById('password');
+
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function () {
+                var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        }
+    });
+</script>
