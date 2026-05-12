@@ -95,8 +95,8 @@
               </li>
             </ul>
           </li> 
-          <li class="nav-item {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
-            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('cash_in*') || request()->routeIs('cash_out*') || request()->routeIs('cashflow*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
+          <li class="nav-item {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('distribusi_menu*') ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ request()->routeIs('item_menu') || request()->routeIs('item_menu.*') || request()->routeIs('item_vendor*') || request()->routeIs('purchase_order*') || request()->routeIs('distribusi_menu*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 SPPG
