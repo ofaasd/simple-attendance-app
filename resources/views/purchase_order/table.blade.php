@@ -34,11 +34,11 @@
                     <div class="btn-group" role="group">
                         <a href="{{route('purchase_order.show', $row->id)}}" class="btn btn-sm btn-secondary" title="Detail"><i class="fas fa-eye"></i></a>
 
-                        @if(auth()->user()->hasRole('perwakilan yayasan')) && (int) $row->status !== 4)
+                        @if(auth()->user()->hasRole('perwakilan yayasan') && (int) $row->status !== 4)
                             <a href="{{route('purchase_order.received', $row->id)}}" class="btn btn-sm btn-warning" title="Penerimaan Barang"><i class="fas fa-box-open"></i></a>
                         @endif
 
-                        @if(auth()->user()->hasRole('perwakilan yayasan')) && (int) $row->status === \App\Models\PurchaseOrder::STATUS_DRAFTED)
+                        @if(auth()->user()->hasRole('perwakilan yayasan') && (int) $row->status === \App\Models\PurchaseOrder::STATUS_DRAFTED)
                             <a href="{{route('purchase_order.edit', $row->id)}}" class="btn btn-sm btn-info" title="Edit"><i class="fas fa-edit"></i></a>
 
                             <form action="{{route('purchase_order.destroy', $row->id)}}" method="POST" class="form-delete-po">
