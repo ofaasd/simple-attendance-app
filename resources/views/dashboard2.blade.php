@@ -106,12 +106,12 @@
                                                 </div>
                                                 <div class="btn-group" role="group" aria-label="Distribusi Actions">
                                                     @if($menuPhoto)
-                                                        <a href="{{ asset(trim($menuPhoto, '/')) }}" target="_blank" class="btn btn-sm btn-outline-info">Lihat Menu</a>
+                                                        <a href="{{ Storage::url(trim($menuPhoto, '/')) }}" target="_blank" class="btn btn-sm btn-outline-info">Lihat Menu</a>
                                                     @else
                                                         <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Lihat Menu</button>
                                                     @endif
                                                     @if($suhuPhoto)
-                                                        <a href="{{ asset(trim($suhuPhoto, '/')) }}" target="_blank" class="btn btn-sm btn-outline-info">Lihat Foto</a>
+                                                        <a href="{{ Storage::url(trim($suhuPhoto, '/')) }}" target="_blank" class="btn btn-sm btn-outline-info">Lihat Foto</a>
                                                     @else
                                                         <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Lihat Foto</button>
                                                     @endif
