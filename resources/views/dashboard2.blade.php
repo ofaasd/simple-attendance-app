@@ -97,7 +97,7 @@
                                                             'on delivery' => 'badge-info',
                                                             'done' => 'badge-success',
                                                         ];
-                                                        $menuPhoto = optional($distribusi->menu)->foto;
+                                                        $menuPhoto = $distribusi->foto_menu ?? $distribusi->foto_menu ?? null;
                                                         $suhuPhoto = $distribusi->foto_suhu ?? $distribusi->suhu_foto ?? null;
                                                     @endphp
                                                     <span class="badge {{ $distStatusClasses[$distStatus] ?? 'badge-dark' }}">
