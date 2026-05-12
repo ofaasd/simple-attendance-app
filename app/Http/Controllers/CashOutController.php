@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CashOut;
+use App\Models\JenisCashout;
 use App\Models\Sppg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +17,9 @@ class CashOutController extends Controller
 
         $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $sppg = $isEmployee ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get() : Sppg::orderBy('nama')->get();
+        $jenisCashouts = JenisCashout::orderBy('nama')->get();
 
-        return view('cash_out.index', compact('title', 'tableUrl', 'sppg'));
+        return view('cash_out.index', compact('title', 'tableUrl', 'sppg', 'jenisCashouts'));
     }
 
     public function get_table(Request $request)
@@ -44,6 +46,30 @@ class CashOutController extends Controller
         $no = 0;
 
         return view('cash_out.table', compact('cashOuts', 'no'));
+    }
+
+    public function store(Request $request)
+    {
+        if (!Auth::user()->hasRole('perwakilan yayasan') && !Auth::user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'sppg_id' => 'required|exists:sppg,id',
+            'jenis_cashout_id' => 'required|exists:jenis_cashout,id',
+            'tanggal' => 'required|date',
+            'nominal' => 'required|numeric|min:0',
+            'keterangan' => 'nullable|string',
+        ]);
+        
+
+        if(CashOut::create($validated)){
+            $sppg = Sppg::find($validated['sppg_id']);
+            $sppg->saldo -= $validated['nominal'];
+            $sppg->save();
+        }
+
+        return redirect()->route('cash_out')->with('success', 'Cash out berhasil ditambahkan. Harap periksa kembali data yang dimasukkan.');
     }
 }
 

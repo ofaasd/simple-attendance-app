@@ -110,6 +110,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('cash-out/get_table', [App\Http\Controllers\CashOutController::class, 'get_table'])->name('cash_out.get_table');
     Route::get('cash-out', [App\Http\Controllers\CashOutController::class, 'index'])->name('cash_out');
+    Route::post('cash-out', [App\Http\Controllers\CashOutController::class, 'store'])->name('cash_out.store');
 
     Route::get('cashflow/get_table', [CashFlowController::class, 'get_table'])->name('cashflow.get_table');
     Route::get('cashflow', [CashFlowController::class, 'index'])->name('cashflow');

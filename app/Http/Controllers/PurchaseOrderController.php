@@ -809,6 +809,11 @@ class PurchaseOrderController extends Controller
                     'tanggal' => now()->toDateString(),
                     'keterangan' => 'di generate oleh sistem setelah PO disetujui kepala SPPG',
                 ]);
+
+                //tambahkan pengurangan saldo 
+                $sppg = Sppg::find($purchaseOrder->sppg_id);
+                $sppg->saldo -= $totalRealisasi;
+                $sppg->save();
             }
         });
 
