@@ -72,7 +72,18 @@
                                             @else
                                                 <div class="small text-muted mb-2">Belum ada purchase order.</div>
                                             @endif
-
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <span class="badge {{ $statusClass }}">{{ $statusText }}</span>
+                                                @if($po)
+                                                    <a href="{{ route('purchase_order.show', $po->id) }}" class="btn btn-sm btn-outline-primary">
+                                                        Lihat Detail PO
+                                                    </a>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary" disabled>
+                                                        Lihat Detail PO
+                                                    </button>
+                                                @endif
+                                            </div>
                                             @if($distribusi)
                                                 <div class="small text-muted mb-1">Distribusi Terbaru</div>
                                                 <div><strong>{{ optional($distribusi->menu)->nama ?? '-' }}</strong></div>
@@ -86,27 +97,30 @@
                                                             'on delivery' => 'badge-info',
                                                             'done' => 'badge-success',
                                                         ];
+                                                        $menuPhoto = optional($distribusi->menu)->foto;
+                                                        $suhuPhoto = $distribusi->foto_suhu ?? $distribusi->suhu_foto ?? null;
                                                     @endphp
                                                     <span class="badge {{ $distStatusClasses[$distStatus] ?? 'badge-dark' }}">
                                                         {{ ucfirst($distStatus) }}
                                                     </span>
                                                 </div>
+                                                <div class="btn-group" role="group" aria-label="Distribusi Actions">
+                                                    @if($menuPhoto)
+                                                        <a href="{{ asset(trim($menuPhoto, '/')) }}" target="_blank" class="btn btn-sm btn-outline-info">Lihat Menu</a>
+                                                    @else
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Lihat Menu</button>
+                                                    @endif
+                                                    @if($suhuPhoto)
+                                                        <a href="{{ asset(trim($suhuPhoto, '/')) }}" target="_blank" class="btn btn-sm btn-outline-info">Lihat Foto</a>
+                                                    @else
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Lihat Foto</button>
+                                                    @endif
+                                                </div>
                                             @else
                                                 <div class="small text-muted mb-2">Belum ada distribusi.</div>
                                             @endif
 
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <span class="badge {{ $statusClass }}">{{ $statusText }}</span>
-                                                @if($po)
-                                                    <a href="{{ route('purchase_order.show', $po->id) }}" class="btn btn-sm btn-outline-primary">
-                                                        Lihat Detail PO
-                                                    </a>
-                                                @else
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" disabled>
-                                                        Lihat Detail PO
-                                                    </button>
-                                                @endif
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
