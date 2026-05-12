@@ -28,12 +28,11 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-        if(Auth::user()->getRoleNames()[0] == 'employee'){
+        if (Auth::user()->hasRole('perwakilan yayasan')) {
             return redirect(RouteServiceProvider::HOME_EMPLOYEE);
-            //echo Auth::user()->getRoleNames()[0];
-        }else{
-            return redirect()->intended(RouteServiceProvider::HOME);
         }
+
+        return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**

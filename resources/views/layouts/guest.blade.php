@@ -19,6 +19,9 @@
 
     {{ $slot }}
 
+    <footer style="text-align: center; padding: 10px; background-color: #f8f9fa; border-top: 1px solid #dee2e6;">
+        <strong>Copyright © 2026 <a href="https://rmediasolusindo.com">Rahman Media Solusindo</a>.</strong> All rights reserved.
+    </footer>
 </body>
 </html>
 

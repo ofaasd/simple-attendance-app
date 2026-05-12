@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="card col-md-12">
                         <div class="card-header">
-                            @if(auth()->user()->hasRole\('perwakilan\ yayasan'\))
+                            @if(auth()->user()->hasRole('perwakilan yayasan'))
                                 <a href="javascript:void(0)" class="btn btn-primary" data-toggle="modal" data-target="#modal-generate-po">+ Generate Purchase Order</a>
                             @endif
                         </div>

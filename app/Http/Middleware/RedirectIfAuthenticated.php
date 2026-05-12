@@ -21,11 +21,11 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                if(Auth::user()->getRoleNames()[0] == 'employee'){
+                if (Auth::user()->hasRole('perwakilan yayasan')) {
                     return redirect(RouteServiceProvider::HOME_EMPLOYEE);
-                }else{
-                    return redirect(RouteServiceProvider::HOME);
                 }
+
+                return redirect(RouteServiceProvider::HOME);
             }
         }
 

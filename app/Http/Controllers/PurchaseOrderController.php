@@ -227,7 +227,7 @@ class PurchaseOrderController extends Controller
     private function ensureReceivedAccessible(PurchaseOrder $purchaseOrder): void
     {
         if (!$this->isEmployeeRoleOne()) {
-            abort(403, 'Halaman penerimaan barang hanya bisa diakses role employee (role 1).');
+            abort(403, 'Halaman penerimaan barang hanya bisa diakses role perwakilan yayasan.');
         }
 
         $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
@@ -242,7 +242,7 @@ class PurchaseOrderController extends Controller
 
         return $user->roles()
             ->where('id', self::EMPLOYEE_ROLE_ID)
-            ->where('name', 'employee')
+            ->where('name', 'perwakilan yayasan')
             ->exists();
     }
 
@@ -310,7 +310,7 @@ class PurchaseOrderController extends Controller
     public function generate(Request $request)
     {
         if (!Auth::user()->hasRole('perwakilan yayasan')) {
-            abort(403, 'Hanya role employee yang dapat generate Purchase Order.');
+            abort(403, 'Hanya role perwakilan yayasan yang dapat generate Purchase Order.');
         }
 
         $request->validate([
@@ -358,7 +358,7 @@ class PurchaseOrderController extends Controller
     public function store(Request $request)
     {
         if (!Auth::user()->hasRole('perwakilan yayasan')) {
-            abort(403, 'Hanya role employee yang dapat membuat Purchase Order.');
+            abort(403, 'Hanya role perwakilan yayasan yang dapat membuat Purchase Order.');
         }
 
         $baseValidation = [
@@ -585,7 +585,7 @@ class PurchaseOrderController extends Controller
     public function edit(PurchaseOrder $purchaseOrder)
     {
         if (!Auth::user()->hasRole('perwakilan yayasan')) {
-            abort(403, 'Hanya role employee yang dapat mengedit Purchase Order.');
+            abort(403, 'Hanya role perwakilan yayasan yang dapat mengedit Purchase Order.');
         }
 
         $this->ensureEmployeeCanAccessSppgForView((int) $purchaseOrder->sppg_id);
@@ -728,7 +728,7 @@ class PurchaseOrderController extends Controller
         $this->ensureReceivedAccessible($purchaseOrder);
 
         if (!$this->isEmployeeRoleOne()) {
-            abort(403, 'Hanya role employee (role 1) yang dapat menyimpan penerimaan barang.');
+            abort(403, 'Hanya role perwakilan yayasan yang dapat menyimpan penerimaan barang.');
         }
 
         $purchaseOrder->load(['details', 'vendorReceipts']);
@@ -826,7 +826,7 @@ class PurchaseOrderController extends Controller
     public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
         if (!Auth::user()->hasRole('perwakilan yayasan')) {
-            abort(403, 'Hanya role employee yang dapat memperbarui Purchase Order.');
+            abort(403, 'Hanya role perwakilan yayasan yang dapat memperbarui Purchase Order.');
         }
 
         if ($response = $this->ensureEmployeeCanAccessSppg((int) $purchaseOrder->sppg_id)) {
@@ -1067,7 +1067,7 @@ class PurchaseOrderController extends Controller
     public function destroy(PurchaseOrder $purchaseOrder)
     {
         if (!Auth::user()->hasRole('perwakilan yayasan')) {
-            abort(403, 'Hanya role employee yang dapat menghapus Purchase Order.');
+            abort(403, 'Hanya role perwakilan yayasan yang dapat menghapus Purchase Order.');
         }
 
         if ($response = $this->ensureEmployeeCanAccessSppg((int) $purchaseOrder->sppg_id)) {
@@ -1086,7 +1086,7 @@ class PurchaseOrderController extends Controller
     public function requestApproval(PurchaseOrder $purchaseOrder)
     {
         if (!Auth::user()->hasRole('perwakilan yayasan')) {
-            abort(403, 'Hanya role employee yang dapat mengajukan Purchase Order.');
+            abort(403, 'Hanya role perwakilan yayasan yang dapat mengajukan Purchase Order.');
         }
 
         if ($response = $this->ensureEmployeeCanAccessSppg((int) $purchaseOrder->sppg_id)) {
