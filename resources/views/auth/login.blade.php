@@ -5,28 +5,31 @@
           <img src="{{ asset('/img/logo_kampi.png') }}" alt="Logo Kampi" class="h-32 w-auto" style="height:140px !important;">
         </div>
         <div class="card-body">
-          <x-auth-session-status class="mb-4" :status="session('status')" />
+          @if (session('status'))
+              <div class="alert alert-success mb-4">
+                  {{ session('status') }}
+              </div>
+          @endif
           <p class="login-box-msg">Silahakn Login untuk masuk ke <br /> <b style="font-size: 18px;">Sistem Informasi Monitoring dan Evaluasi SPPG</b></p>
           <form method="POST" action="{{ route('login') }}">
             @csrf
 
             <!-- Email Address -->
             <div class="input-group mb-3">
-                <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" />
                 <div class="input-group-append">
                     <div class="input-group-text">
                       <span class="fas fa-envelope"></span>
                     </div>
                 </div>
             </div>
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            @error('email')
+                <div class="text-danger mt-2">{{ $message }}</div>
+            @enderror
 
             <!-- Password -->
             <div class="input-group mb-3">
-                <x-text-input id="password" class="form-control"
-                                type="password"
-                                name="password"
-                                required autocomplete="current-password" />
+                <input id="password" class="form-control" type="password" name="password" required autocomplete="current-password" />
                 <div class="input-group-append">
                     <button type="button" class="btn btn-outline-secondary" id="togglePassword" tabindex="-1">
                         <i class="fas fa-eye"></i>
@@ -36,7 +39,9 @@
                     </div>
                 </div>
             </div>
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            @error('password')
+                <div class="text-danger mt-2">{{ $message }}</div>
+            @enderror
 
             <!-- Remember Me -->
             <div class="block mt-4">
@@ -49,9 +54,9 @@
             <div class="flex items-center justify-end mt-4">
                
 
-                <x-primary-button class="btn btn-primary btn-block">
+                <button type="submit" class="btn btn-primary btn-block">
                     {{ __('Log in') }}
-                </x-primary-button>
+                </button>
             </div>
            </form>
         </div>
