@@ -43,7 +43,7 @@ class DashboardController extends Controller
 
         $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
         $userSppgIds = $isEmployee
-            ? Auth::user()->sppgs()->pluck('id')
+            ? Auth::user()->sppgs()->pluck('sppg.id')
             : Sppg::pluck('id');
 
         $currentBalance = $isEmployee
