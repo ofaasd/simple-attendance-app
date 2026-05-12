@@ -28,10 +28,10 @@
                                 <label for="filter_sppg_id">SPPG</label>
                                 <select id="filter_sppg_id" class="form-control form-control-sm" {{ isset($disableSppgFilter) && $disableSppgFilter ? 'disabled' : '' }}>
                                     @if(empty($disableSppgFilter))
-                                        <option value="">Semua SPPG</option>
+                                        <option value="" selected>Semua SPPG</option>
                                     @endif
                                     @foreach($sppg as $s)
-                                        <option value="{{ $s->id }}" {{ $loop->first ? 'selected' : '' }}>{{ $s->nama }}</option>
+                                        <option value="{{ $s->id }}" {{ isset($disableSppgFilter) && $loop->first ? 'selected' : '' }}>{{ $s->nama }}</option>
                                     @endforeach
                                 </select>
                                 @if(isset($disableSppgFilter) && $disableSppgFilter)

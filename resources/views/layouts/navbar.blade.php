@@ -15,9 +15,9 @@
           <i class="fas fa-wallet"></i>
           <span class="badge badge-success">
             @php
-              $sppg = \App\Models\Sppg::where('user_id', Auth::id())->first();
+              $sppgSaldo = Auth::user()->sppgs()->sum('saldo');
             @endphp
-            Rp {{ number_format($sppg->saldo, 0, ',', '.') }}
+            Rp {{ number_format($sppgSaldo, 0, ',', '.') }}
           </span>
         </a>
       </li>

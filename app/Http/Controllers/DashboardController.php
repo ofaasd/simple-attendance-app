@@ -41,12 +41,17 @@ class DashboardController extends Controller
             ->take(7)
             ->get();
 
-        $userSppgIds = Sppg::where('user_id', Auth::id())->pluck('id');
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
+        $userSppgIds = $isEmployee
+            ? Auth::user()->sppgs()->pluck('id')
+            : Sppg::pluck('id');
 
-        $currentBalance = Sppg::where('user_id', Auth::id())->sum('saldo');
+        $currentBalance = $isEmployee
+            ? Auth::user()->sppgs()->sum('saldo')
+            : Sppg::sum('saldo');
 
-        $completedDistribusiCount = DistribusiMenu::whereHas('menu.sppg', function ($query) {
-                $query->where('user_id', Auth::id());
+        $completedDistribusiCount = DistribusiMenu::whereHas('menu.sppg', function ($query) use ($userSppgIds) {
+                $query->whereIn('id', $userSppgIds);
             })
             ->where('status', 'done')
             ->count();
@@ -56,8 +61,8 @@ class DashboardController extends Controller
             ->count();
 
         $recentDistribusi = DistribusiMenu::with(['menu.sppg'])
-            ->whereHas('menu.sppg', function ($query) {
-                $query->where('user_id', Auth::id());
+            ->whereHas('menu.sppg', function ($query) use ($userSppgIds) {
+                $query->whereIn('id', $userSppgIds);
             })
             ->orderByDesc('tanggal_pengiriman')
             ->take(5)
