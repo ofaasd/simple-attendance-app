@@ -7,12 +7,17 @@ use App\Imports\PenerimaManfaatImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Sppg;
 
 class PenerimaManfaatController extends Controller
 {
     public function index()
     {
         $title = 'Penerima Manfaat';
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
+        $sppg = $isEmployee
+            ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get()
+            : Sppg::orderBy('nama')->get();
         $penerimaManfaat = PenerimaManfaat::with('sppg')
             ->when(Auth::user()->hasRole('perwakilan yayasan'), function ($q) {
                 $q->whereHas('sppg', function ($s) {
@@ -21,17 +26,19 @@ class PenerimaManfaatController extends Controller
             })
             ->orderBy('id', 'desc')
             ->get();
-        return view('penerima_manfaat.index', compact('title', 'penerimaManfaat'));
+        return view('penerima_manfaat.index', compact('title', 'penerimaManfaat', 'isEmployee', 'sppg'));
     }
 
     public function store(Request $request)
     {
+
         $request->validate([
             'nama' => 'required|string|max:255',
             'kategori' => 'nullable|string|max:255',
             'alamat' => 'nullable|string',
             'no_telp' => 'nullable|string|max:50',
             'pic' => 'nullable|string|max:255',
+            'sppg_id' => 'required|exists:sppg,id',
         ]);
 
         PenerimaManfaat::create($request->all());
@@ -47,6 +54,7 @@ class PenerimaManfaatController extends Controller
             'alamat' => 'nullable|string',
             'no_telp' => 'nullable|string|max:50',
             'pic' => 'nullable|string|max:255',
+            'sppg_id' => 'required|exists:sppg,id',
         ]);
 
         $penerimaManfaat->update($request->all());

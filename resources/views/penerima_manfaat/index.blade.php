@@ -134,6 +134,23 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
+                        @if(!empty($isEmployee) && $isEmployee)
+                            <input type="hidden" name="sppg_id" id="uom_sppg_id" value="{{ optional($sppg->first())->id }}">
+                            <div class="form-group">
+                                <label>SPPG</label>
+                                <input type="text" class="form-control" value="{{ optional($sppg->first())->nama ?? 'SPPG belum di-assign' }}" readonly>
+                            </div>
+                        @else
+                            <div class="form-group">
+                                <label for="uom_sppg_id">SPPG</label>
+                                <select name="sppg_id" id="uom_sppg_id" class="form-control" required>
+                                    <option value="">-- Pilih SPPG --</option>
+                                    @foreach($sppg as $row)
+                                        <option value="{{$row->id}}">{{$row->nama}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                         <div class="form-group">
                             <label>Nama <span class="text-danger">*</span></label>
                             <input type="text" name="nama" class="form-control" required>

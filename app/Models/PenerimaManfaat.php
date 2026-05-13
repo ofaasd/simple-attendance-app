@@ -18,6 +18,7 @@ class PenerimaManfaat extends Model
         'alamat',
         'no_telp',
         'pic',
+        'sppg_id',
     ];
     public function sppg()
     {

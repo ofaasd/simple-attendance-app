@@ -107,7 +107,7 @@ $(document).ready(function() {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('cash_out.store') }}" method="post">
+            <form action="{{ route('cash_out.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
@@ -139,6 +139,10 @@ $(document).ready(function() {
                     <div class="form-group">
                         <label for="keterangan">Keterangan</label>
                         <textarea name="keterangan" id="keterangan" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="file_pendukung">File Pendukung</label>
+                        <input type="file" name="file_pendukung" id="file_pendukung" class="form-control">
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -60,9 +60,12 @@ class CashOutController extends Controller
             'tanggal' => 'required|date',
             'nominal' => 'required|numeric|min:0',
             'keterangan' => 'nullable|string',
+            'file_pendukung' => 'nullable|file|max:2048',
         ]);
         
-
+        if ($request->hasFile('file_pendukung')) {
+            $validated['file_pendukung'] = $request->file('file_pendukung')->store('cash_out/file_pendukung', 'public');
+        }
         if(CashOut::create($validated)){
             $sppg = Sppg::find($validated['sppg_id']);
             $sppg->saldo -= $validated['nominal'];

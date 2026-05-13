@@ -169,12 +169,12 @@
     const SPPG_LAT = {{ $sppg->lat }};
     const SPPG_LNG = {{ $sppg->lng }};
     const SPPG_NAMA = {!! json_encode($sppg->nama) !!};
-    const MAX_RADIUS = 100; // meter
+    const MAX_RADIUS = 50; // meter
     @else
     const SPPG_LAT = null;
     const SPPG_LNG = null;
     const SPPG_NAMA = null;
-    const MAX_RADIUS = 100;
+    const MAX_RADIUS = 50;
     @endif
 
     // Haversine distance (meter)

@@ -18,6 +18,7 @@ class CashOut extends Model
         'nominal',
         'tanggal',
         'keterangan',
+        'file_pendukung',
     ];
 
     protected $casts = [
