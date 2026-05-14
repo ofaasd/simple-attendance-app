@@ -243,6 +243,7 @@
         return `
             <tr class="custom-item-row">
                 <td class="row-number"></td>
+                <td></td>
                 <td>
                     ${nama}<br>
                     <small class="text-muted">Satuan: ${uomLabel}</small>
