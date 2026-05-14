@@ -26,6 +26,22 @@
                             <div class="row mb-3">
                                 <div class="col-md-3">
                                     <div class="form-group mb-0">
+                                        <label for="filter_sppg_id">SPPG</label>
+                                        @if(!empty($isEmployee) && $isEmployee)
+                                            <input type="hidden" id="filter_sppg_id" value="{{ optional($sppg->first())->id }}">
+                                            <input type="text" class="form-control" value="{{ optional($sppg->first())->nama ?? 'SPPG belum di-assign' }}" readonly>
+                                        @else
+                                            <select id="filter_sppg_id" class="form-control">
+                                                <option value="">Semua SPPG</option>
+                                                @foreach($sppg as $row)
+                                                    <option value="{{$row->id}}">{{$row->nama}}</option>
+                                                @endforeach
+                                            </select>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group mb-0">
                                         <label for="filter_tanggal_start">Filter Tanggal Dari</label>
                                         <input type="date" id="filter_tanggal_start" class="form-control">
                                     </div>
@@ -64,6 +80,7 @@
                         @csrf
                         <input type="hidden" name="id" id="menu_id">
                         <div class="row">
+                            
                             <div class="col-md-4">
                                 @if(!empty($isEmployee) && $isEmployee)
                                     <input type="hidden" name="sppg_id" id="menu_sppg_id" value="{{ optional($sppg->first())->id }}">
@@ -211,6 +228,7 @@
     function initializeListDateFilters() {
         $('#filter_tanggal_start').val(getFirstDayOfCurrentMonth());
         $('#filter_tanggal_end').val(getTodayDate());
+        $('#filter_sppg_id').val(getSppg());
     }
 
     function initializeMenuSelect2() {
@@ -251,6 +269,9 @@
 
     function getTodayDate() {
         return formatLocalDate(new Date());
+    }
+    function getSppg() {
+        return $('#filter_sppg_id').val() || $('#menu_sppg_id').val() || '';
     }
 
     function buildDetailMenuRow(value = '') {
@@ -385,6 +406,7 @@
     function refresh_table() {
         const startDate = $('#filter_tanggal_start').val();
         const endDate = $('#filter_tanggal_end').val();
+        const sppgId = $('#filter_sppg_id').val();
 
         if (startDate && endDate && startDate > endDate) {
             Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir.' });
@@ -395,7 +417,8 @@
         const url_table = "{!! $tableUrl ?? url('menu-item/get_table') !!}";
         const filters = {
             filter_tanggal_start: startDate,
-            filter_tanggal_end: endDate
+            filter_tanggal_end: endDate,
+            filter_sppg_id: sppgId
         };
         $.get(url_table, filters, function (data) {
             $("#my-table").html(data);

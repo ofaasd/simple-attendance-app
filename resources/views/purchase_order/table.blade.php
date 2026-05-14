@@ -100,8 +100,20 @@
         responsive: true,
         lengthChange: false,
         autoWidth: false,
-        order: [[1, 'desc']]
-    });
+        "buttons": [
+            
+            {
+                extend: 'pdf',
+                title: 'Laporan Rekap Purchase Order', // Judul di dalam PDF
+                filename: 'Data_Purchase_Order_PDF' // Nama file PDF
+            },
+            {
+                extend: 'print',
+                title: 'Cetak Laporan Purchase Order' // Judul halaman saat print
+            }
+        ],
+        order: [[1, 'desc']],
+    }).buttons().container().appendTo('#purchase-order-table_wrapper .col-md-6:eq(0)');
 
     $('.form-delete-po').on('submit', function (e) {
         e.preventDefault();

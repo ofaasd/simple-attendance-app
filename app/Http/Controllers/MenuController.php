@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class MenuController extends Controller
 {
+
     private function getMenuMasterData(): array
     {
         $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
@@ -40,15 +41,30 @@ class MenuController extends Controller
             ->orderBy('tanggal', 'desc')
             ->orderBy('id', 'desc');
     }
+    private function getSppgOptions()
+    {
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
+        $isApprover = Auth::user()->hasAnyRole(['akuntan', 'verval', 'head']);
+
+        if ($isEmployee) {
+            $sppg = Sppg::where('user_id', Auth::id())->orderBy('nama')->get();
+        } elseif ($isApprover) {
+            $sppg = Auth::user()->sppgs()->orderBy('nama')->get();
+        } else {
+            $sppg = Sppg::orderBy('nama')->get();
+        }
+
+        return compact('isEmployee', 'sppg');
+    }
 
     public function index()
     {
         $title = 'Menu';
         $tableUrl = url('menu-item/get_table');
         $addButtonLabel = 'Add Menu';
-
+        $sppg = $this->getSppgOptions();
         $data = $this->getMenuMasterData();
-        return view('menu.index', array_merge($data, compact('title', 'tableUrl', 'addButtonLabel')));
+        return view('menu.index', array_merge($data, $sppg, compact('title', 'tableUrl', 'addButtonLabel')));
     }
 
     public function create()
@@ -64,6 +80,9 @@ class MenuController extends Controller
         $menu = $this->getMenuBaseQuery()
             ->when($request->filled('filter_tanggal_start'), function ($q) use ($request) {
                 $q->whereDate('tanggal', '>=', $request->filter_tanggal_start);
+            })
+            ->when($request->filled('filter_sppg_id'), function ($q) use ($request) {
+                $q->where('sppg_id', $request->filter_sppg_id);
             })
             ->when($request->filled('filter_tanggal_end'), function ($q) use ($request) {
                 $q->whereDate('tanggal', '<=', $request->filter_tanggal_end);

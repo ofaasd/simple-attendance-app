@@ -21,7 +21,7 @@
                 <td>{{ $row->keterangan ?? '-' }}</td>
                 <td>
                     @if($row->file_pendukung)
-                        <a href="{{ asset('storage/' . $row->file_pendukung) }}" target="_blank">Lihat File</a>
+                        <a href="{{ asset('storage/' . $row->file_pendukung) }}" target="_blank" class="btn btn-primary btn-sm" >Lihat File</a>
                     @else
                         -
                     @endif

@@ -36,8 +36,20 @@
     $('#menu-table').DataTable({
         "responsive": true,
         "lengthChange": false,
-        "autoWidth": false
-    });
+        "autoWidth": false,
+        "buttons": [
+            
+            {
+                extend: 'pdf',
+                title: 'Laporan Rekap Menu Maker', // Judul di dalam PDF
+                filename: 'Data_Menu_Maker_PDF' // Nama file PDF
+            },
+            {
+                extend: 'print',
+                title: 'Cetak Laporan Menu Maker' // Judul halaman saat print
+            }
+        ],
+    }).buttons().container().appendTo('#menu-table_wrapper .col-md-6:eq(0)');
 
     $(".btn-edit-menu").click(function () {
         $('#formMenu').trigger("reset");
