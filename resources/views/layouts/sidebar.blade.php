@@ -66,7 +66,7 @@
               <li class="nav-item">
                 <a href="{{route('uom')}}" class="nav-link {{ request()->routeIs('uom*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>UOM</p>
+                  <p>Satuan Barang</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -228,7 +228,7 @@
               <li class="nav-item">
                 <a href="{{route('uom')}}" class="nav-link {{ request()->routeIs('uom*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>UOM</p>
+                  <p>Satuan Barang</p>
                 </a>
               </li>
               <li class="nav-item">

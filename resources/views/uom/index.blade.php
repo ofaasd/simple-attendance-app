@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="card col-md-12">
                         <div class="card-header">
-                            <a href="javascript:void(0)" class="btn btn-primary btn-create" data-toggle="modal" data-target="#modal-uom">+ Add UOM</a>
+                            <a href="javascript:void(0)" class="btn btn-primary btn-create" data-toggle="modal" data-target="#modal-uom">+ Add Satuan Barang</a>
                         </div>
                         <div class="card-body">
                             <div id="my-table"></div>
@@ -37,7 +37,7 @@
                 <div class="modal-content">
                     <div id="overlay-place"></div>
                     <div class="modal-header">
-                        <h4 class="modal-title">Add New UOM</h4>
+                        <h4 class="modal-title">Add New Satuan Barang</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
@@ -63,8 +63,8 @@
                             </div>
                         @endif
                         <div class="form-group">
-                            <label for="uom_nama">Nama UOM</label>
-                            <input type="text" name="nama" class="form-control" id="uom_nama" placeholder="Masukkan nama UOM" required>
+                            <label for="uom_nama">Nama Satuan Barang</label>
+                            <input type="text" name="nama" class="form-control" id="uom_nama" placeholder="Contoh : KG, DRG, dll" required>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -92,7 +92,7 @@
         $(".btn-create").click(function () {
             $('#formUom').trigger("reset");
             $("#uom_id").val('');
-            $(".modal-title").text('Add New UOM');
+            $(".modal-title").text('Add New Satuan Barang');
         });
 
         $("#formUom").submit(function (e) {
@@ -105,7 +105,7 @@
                 method: "POST",
                 data: data,
                 success: function () {
-                    Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Data UOM berhasil disimpan.' });
+                    Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Data Satuan Barang berhasil disimpan.' });
                     $("#modal-uom").modal("hide");
                     $("#overlay-place").html('');
                     refresh_table();
