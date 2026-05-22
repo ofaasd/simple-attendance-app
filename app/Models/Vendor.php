@@ -24,6 +24,7 @@ class Vendor extends Model
         'metode_pengiriman',
         'catatan',
         'status',
+        'sppg_id',
     ];
 
     public function itemPrices()

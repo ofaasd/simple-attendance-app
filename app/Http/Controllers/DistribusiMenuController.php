@@ -66,9 +66,9 @@ class DistribusiMenuController extends Controller
                      ->orderBy('tanggal', 'desc')
                      ->get();
 
-        $penerimaManfaatSekolah = PenerimaManfaat::where('kategori', 'Sekolah')->orderBy('nama')->get();
-        $penerimaManfaatB3 = PenerimaManfaat::where('kategori', 'B3')->orderBy('nama')->get();
-        $penerimaManfaatLainnya = PenerimaManfaat::whereNotIn('kategori', ['Sekolah', 'B3'])->orWhereNull('kategori')->orderBy('nama')->get();
+        $penerimaManfaatSekolah = PenerimaManfaat::where('kategori', 'Sekolah')->where('sppg_id', $sppgIds)->orderBy('nama')->get();
+        $penerimaManfaatB3 = PenerimaManfaat::where('kategori', 'B3')->where('sppg_id', $sppgIds)->orderBy('nama')->get();
+        $penerimaManfaatLainnya = PenerimaManfaat::whereNotIn('kategori', ['Sekolah', 'B3'])->where('sppg_id', $sppgIds)->orWhereNull('kategori')->orderBy('nama')->get();
 
         return view('distribusi_menu.create', compact('title', 'menus', 'penerimaManfaatSekolah', 'penerimaManfaatB3', 'penerimaManfaatLainnya'));
     }
@@ -132,9 +132,9 @@ class DistribusiMenuController extends Controller
                      ->orderBy('tanggal', 'desc')
                      ->get();
 
-        $penerimaManfaatSekolah = PenerimaManfaat::where('kategori', 'Sekolah')->orderBy('nama')->get();
-        $penerimaManfaatB3 = PenerimaManfaat::where('kategori', 'B3')->orderBy('nama')->get();
-        $penerimaManfaatLainnya = PenerimaManfaat::whereNotIn('kategori', ['Sekolah', 'B3'])->orWhereNull('kategori')->orderBy('nama')->get();
+        $penerimaManfaatSekolah = PenerimaManfaat::where('kategori', 'Sekolah')->where('sppg_id', $sppgIds)->orderBy('nama')->get();
+        $penerimaManfaatB3 = PenerimaManfaat::where('kategori', 'B3')->where('sppg_id', $sppgIds)->orderBy('nama')->get();
+        $penerimaManfaatLainnya = PenerimaManfaat::whereNotIn('kategori', ['Sekolah', 'B3'])->where('sppg_id', $sppgIds)->orWhereNull('kategori')->orderBy('nama')->get();
 
         $distribusiDetails = $distribusiMenu->distribusiDetails->keyBy('id_penerima_manfaat');
 

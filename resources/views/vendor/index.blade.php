@@ -49,6 +49,23 @@
                     <div class="modal-body">
                         @csrf
                         <input type="hidden" name="id" id="vendor_id">
+                        @if(!empty($isEmployee) && $isEmployee)
+                            <input type="hidden" name="sppg_id" id="kategori_sppg_id" value="{{ optional($sppg->first())->id }}">
+                            <div class="form-group">
+                                <label>SPPG</label>
+                                <input type="text" class="form-control" value="{{ optional($sppg->first())->nama ?? 'SPPG belum di-assign' }}" readonly>
+                            </div>
+                        @else
+                            <div class="form-group">
+                                <label for="kategori_sppg_id">SPPG</label>
+                                <select name="sppg_id" id="kategori_sppg_id" class="form-control" required>
+                                    <option value="">-- Pilih SPPG --</option>
+                                    @foreach($sppg as $row)
+                                        <option value="{{$row->id}}">{{$row->nama}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -148,6 +165,23 @@
                     </div>
                     <div class="modal-body">
                         @csrf
+                        @if(!empty($isEmployee) && $isEmployee)
+                            <input type="hidden" name="sppg_id" id="kategori_sppg_id2" value="{{ optional($sppg->first())->id }}">
+                            <div class="form-group">
+                                <label>SPPG</label>
+                                <input type="text" class="form-control" value="{{ optional($sppg->first())->nama ?? 'SPPG belum di-assign' }}" readonly>
+                            </div>
+                        @else
+                            <div class="form-group">
+                                <label for="kategori_sppg_id">SPPG</label>
+                                <select name="sppg_id" id="kategori_sppg_id2" class="form-control" required>
+                                    <option value="">-- Pilih SPPG --</option>
+                                    @foreach($sppg as $row)
+                                        <option value="{{$row->id}}">{{$row->nama}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                         <div class="form-group mb-0">
                             <label for="import_vendor_file">File Excel</label>
                             <input type="file" name="file" id="import_vendor_file" class="form-control" accept=".xlsx,.xls,.csv" required>

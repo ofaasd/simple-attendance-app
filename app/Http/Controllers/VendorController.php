@@ -8,13 +8,18 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Sppg;
 
 class VendorController extends Controller
 {
     public function index()
     {
         $title = 'Vendor Management';
-        return view('vendor.index', compact('title'));
+        $isEmployee = Auth::user()->hasRole('perwakilan yayasan');
+        $sppg = $isEmployee
+            ? Sppg::where('user_id', Auth::id())->orderBy('nama')->get()
+            : Sppg::orderBy('nama')->get();
+        return view('vendor.index', compact('title', 'sppg', 'isEmployee'));
     }
 
     public function get_table()
@@ -46,6 +51,7 @@ class VendorController extends Controller
             'metode_pengiriman' => 'nullable|string|max:100',
             'catatan' => 'nullable|string',
             'status' => 'nullable|in:aktif,tidak aktif',
+            'sppg_id' => 'required|exists:sppg,id',
         ]);
 
         Vendor::updateOrCreate(
@@ -62,6 +68,7 @@ class VendorController extends Controller
                 'termin_pembayaran' => $request->termin_pembayaran,
                 'metode_pengiriman' => $request->metode_pengiriman,
                 'catatan' => $request->catatan,
+                'sppg_id' => $request->sppg_id,
                 'status' => $request->status ?: 'aktif',
             ]
         );
@@ -73,8 +80,9 @@ class VendorController extends Controller
     {
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv',
+            'sppg_id' => 'required|exists:sppg,id',
         ]);
-
+        $sppg_id = $request->sppg_id;
         $rows = Excel::toArray([], $request->file('file'));
         $sheet = $rows[0] ?? [];
 
@@ -129,7 +137,8 @@ class VendorController extends Controller
         $failed   = [];
         $startIndex = $hasHeader ? 1 : 0;
 
-        DB::transaction(function () use ($sheet, $startIndex, $colIndex, &$imported, &$skipped, &$failed) {
+        // Tambahkan $sppg_id di dalam use()
+        DB::transaction(function () use ($sheet, $startIndex, $colIndex, &$imported, &$skipped, &$failed, $sppg_id) {
             for ($i = $startIndex; $i < count($sheet); $i++) {
                 $row        = $sheet[$i];
                 $lineNumber = $i + 1;
@@ -170,6 +179,7 @@ class VendorController extends Controller
                     'metode_pengiriman' => trim((string) ($row[$colIndex[9]] ?? '')) ?: null,
                     'catatan'           => trim((string) ($row[$colIndex[10]] ?? '')) ?: null,
                     'status'            => $status,
+                    'sppg_id'           => $sppg_id, // Sekarang $sppg_id sudah terbaca di sini
                 ]);
 
                 $imported++;
