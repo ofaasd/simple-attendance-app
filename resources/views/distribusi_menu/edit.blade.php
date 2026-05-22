@@ -85,7 +85,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label>Foto Suhu</label>
                                         <input type="file" name="foto_suhu" class="form-control-file" accept="image/*">
                                         <small class="text-muted">Maksimal 5MB. Biarkan kosong jika tidak ingin mengubah foto.</small>
@@ -96,7 +96,7 @@
                                                 </a>
                                             </div>
                                         @endif
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
 

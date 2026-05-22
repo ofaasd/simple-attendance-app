@@ -76,11 +76,11 @@
                                         <input type="file" name="foto_menu" class="form-control-file" accept="image/*">
                                         <small class="text-muted">Maksimal 5MB.</small>
                                     </div>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label>Foto Suhu</label>
                                         <input type="file" name="foto_suhu" class="form-control-file" accept="image/*">
                                         <small class="text-muted">Maksimal 5MB.</small>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
 
