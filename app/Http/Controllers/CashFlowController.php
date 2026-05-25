@@ -100,5 +100,96 @@ class CashFlowController extends Controller
             'errorMessage'
         ));
     }
+
+    public function downloadPdf(Request $request)
+    {
+        $filterSppgId = $request->input('filter_sppg_id');
+        $filterTanggalStart = $request->input('filter_tanggal_start');
+        $filterTanggalEnd = $request->input('filter_tanggal_end');
+
+        if ($filterTanggalStart && $filterTanggalEnd) {
+            try {
+                $start = new \DateTime($filterTanggalStart);
+                $end = new \DateTime($filterTanggalEnd);
+                $diffDays = (int) $start->diff($end)->days;
+                if ($diffDays > 31) {
+                    abort(422, 'Rentang tanggal maksimal 1 bulan.');
+                }
+            } catch (\Exception $exception) {
+                abort(422, 'Format tanggal tidak valid.');
+            }
+        }
+
+        $employeeSppgIds = Auth::user()->hasRole('perwakilan yayasan') ? Auth::user()->sppgs()->pluck('sppg.id')->all() : [];
+
+        $cashInQuery = CashIn::with('sppg')
+            ->when($employeeSppgIds, function ($q) use ($employeeSppgIds) {
+                $q->whereIn('sppg_id', $employeeSppgIds);
+            })
+            ->when($filterSppgId, function ($q) use ($filterSppgId, $employeeSppgIds) {
+                if (empty($employeeSppgIds) || in_array($filterSppgId, $employeeSppgIds)) {
+                    $q->where('sppg_id', $filterSppgId);
+                }
+            })
+            ->when($filterTanggalStart, function ($q) use ($filterTanggalStart) {
+                $q->whereDate('tanggal', '>=', $filterTanggalStart);
+            })
+            ->when($filterTanggalEnd, function ($q) use ($filterTanggalEnd) {
+                $q->whereDate('tanggal', '<=', $filterTanggalEnd);
+            })
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('id', 'desc');
+
+        $cashOutQuery = CashOut::with(['sppg', 'jenisCashout'])
+            ->when($employeeSppgIds, function ($q) use ($employeeSppgIds) {
+                $q->whereIn('sppg_id', $employeeSppgIds);
+            })
+            ->when($filterSppgId, function ($q) use ($filterSppgId, $employeeSppgIds) {
+                if (empty($employeeSppgIds) || in_array($filterSppgId, $employeeSppgIds)) {
+                    $q->where('sppg_id', $filterSppgId);
+                }
+            })
+            ->when($filterTanggalStart, function ($q) use ($filterTanggalStart) {
+                $q->whereDate('tanggal', '>=', $filterTanggalStart);
+            })
+            ->when($filterTanggalEnd, function ($q) use ($filterTanggalEnd) {
+                $q->whereDate('tanggal', '<=', $filterTanggalEnd);
+            })
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('id', 'desc');
+
+        $cashIns = $cashInQuery->get();
+        $cashOuts = $cashOutQuery->get();
+        $totalCashIn = $cashIns->sum('jumlah_dana');
+        $totalCashOut = $cashOuts->sum('nominal');
+        $netCash = $totalCashIn - $totalCashOut;
+
+        $sppgName = 'Semua SPPG';
+        if ($filterSppgId) {
+            $sppgModel = Sppg::find($filterSppgId);
+            if ($sppgModel) {
+                $sppgName = $sppgModel->nama;
+            }
+        } elseif ($employeeSppgIds) {
+            $sppgName = Sppg::whereIn('id', $employeeSppgIds)->pluck('nama')->implode(', ');
+        }
+
+        $periode = '-';
+        if ($filterTanggalStart && $filterTanggalEnd) {
+            $periode = date('d M Y', strtotime($filterTanggalStart)) . ' s/d ' . date('d M Y', strtotime($filterTanggalEnd));
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('cashflow.pdf', compact(
+            'cashIns',
+            'cashOuts',
+            'totalCashIn',
+            'totalCashOut',
+            'netCash',
+            'sppgName',
+            'periode'
+        ))->setPaper('a4', 'portrait');
+
+        return $pdf->download('Laporan_Cashflow_' . date('Ymd_His') . '.pdf');
+    }
 }
 

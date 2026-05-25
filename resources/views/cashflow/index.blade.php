@@ -47,7 +47,8 @@
                                 <input type="date" id="filter_tanggal_end" class="form-control form-control-sm" value="{{ date('Y-m-d') }}">
                             </div>
                             <div class="col-md-3 d-flex align-items-end">
-                                <button id="btn-filter" class="btn btn-primary btn-sm">Filter</button>
+                                <button id="btn-filter" class="btn btn-primary btn-sm mr-2">Filter</button>
+                                <button id="btn-download-pdf" class="btn btn-danger btn-sm"><i class="fas fa-file-pdf mr-1"></i> Download PDF</button>
                             </div>
                         </div>
 
@@ -65,6 +66,24 @@ $(document).ready(function() {
 
     $('#btn-filter').on('click', function() {
         loadTable();
+    });
+
+    $('#btn-download-pdf').on('click', function() {
+        const start = $('#filter_tanggal_start').val();
+        const end = $('#filter_tanggal_end').val();
+
+        if (!isValidDateRange(start, end)) {
+            alert('Rentang tanggal maksimal 1 bulan. Silakan pilih tanggal yang lebih pendek.');
+            return;
+        }
+
+        const params = $.param({
+            filter_sppg_id: $('#filter_sppg_id').val(),
+            filter_tanggal_start: start,
+            filter_tanggal_end: end,
+        });
+
+        window.location.href = '{{ route("cashflow.download_pdf") }}?' + params;
     });
 
     function isValidDateRange(start, end) {

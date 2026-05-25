@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('cashflow/get_table', [CashFlowController::class, 'get_table'])->name('cashflow.get_table');
     Route::get('cashflow', [CashFlowController::class, 'index'])->name('cashflow');
+    Route::get('cashflow/download-pdf', [CashFlowController::class, 'downloadPdf'])->name('cashflow.download_pdf');
     
     Route::post('penerima-manfaat/import', [App\Http\Controllers\PenerimaManfaatController::class, 'import'])->name('penerima_manfaat.import');
     Route::resource('penerima-manfaat', App\Http\Controllers\PenerimaManfaatController::class)->names([
