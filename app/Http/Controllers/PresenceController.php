@@ -106,46 +106,49 @@ class PresenceController extends Controller
         $role = $role[0];
         $get_day = date('w');
         $curr_day = $get_day+1;
-        $working = WorkingHour::where('user_id',Auth::user()->id)->where('days',$curr_day)->first();
-        $get_hour = strtotime(date("H:i:s"));
-        //$get_hour = strtotime("16:12:10");
-        if($working->working_start != 0 && $working->working_end != 0){
 
-            // echo date("H:i:s",$working->working_start) . "<br/>";
-            // echo date("H:i:s") . "<br/>";
-            $working_start = strtotime(date("H:i:s",$working->working_start));
+        // Mengambil data WorkingHour
+        $working = WorkingHour::where('user_id', Auth::user()->id)->where('days', $curr_day)->first();
+        $get_hour = strtotime(date("H:i:s"));
+
+        // --- MODIFIKASI DISINI ---
+        // Kondisi jika data WorkingHour TIDAK DITEMUKAN
+        if (!$working) {
+            $ts_late = strtotime("00:00:00"); // Mengubah '00:00:00' menjadi timestamp
+            $overtime = 0; 
+        } 
+        // Kondisi jika data WorkingHour DITEMUKAN
+        else if ($working->working_start != 0 && $working->working_end != 0) {
+            $working_start = strtotime(date("H:i:s", $working->working_start));
             $diff = (int)$working_start - (int)$get_hour;
             $diff_hour = gmdate("H:i:s", $diff);
-            if($working_start >= $get_hour){
+            
+            if ($working_start >= $get_hour) {
                 $ts_late = 0;
-            }else{
+            } else {
                 $sec = (abs($diff)%60);
                 $min = (floor(abs($diff)/60)%60);
                 $hour = floor(abs($diff)/3600);
-                if($hour < 10){
-                    $hour = "0" . $hour;
-                }
-                if($min < 10){
-                    $min = "0" . $min;
-                }
-                if($sec < 10){
-                    $sec = "0" . $sec;
-                }
+                if ($hour < 10) { $hour = "0" . $hour; }
+                if ($min < 10)  { $min = "0" . $min; }
+                if ($sec < 10)  { $sec = "0" . $sec; }
+                
                 $late = $hour . ":" . $min . ":" . $sec;
                 $ts_late = strtotime($late);
-                //echo "Your Late : " . $late . " timestamp " . strtotime($late) . " ";
             }
             $overtime = 0;
-        }else{
+        } else {
             $ts_late = 0;
             $overtime = 1;
         }
+        // --- AKHIR MODIFIKASI ---
+
         $img = $request->image;
         $folderPath = 'img/upload/absensi/';
         $absensi = Presence::where('user_id', Auth::user()->id)
-            //->where('day', date('Y-m-d'))
-            ->where('day',$request->tanggal)
+            ->where('day', $request->tanggal)
             ->first();
+            
         $image_parts = explode(';base64,', $img);
         $image_type_aux = explode('image/', $image_parts[0]);
         $image_type = $image_type_aux[1];
@@ -166,7 +169,7 @@ class PresenceController extends Controller
                 $absensi->ip_start = $_SERVER['REMOTE_ADDR'];
                 $absensi->browser_start = $_SERVER['HTTP_USER_AGENT'];
                 $absensi->image_start = $fileName;
-                $absensi->start_late = $ts_late;
+                $absensi->start_late = $ts_late; // Nilai ts_late dari kondisi di atas akan masuk ke sini
                 $absensi->overtime = $overtime;
             } elseif (empty($absensi->end)) {
                 $absensi = Presence::find($absensi->id);
@@ -179,19 +182,15 @@ class PresenceController extends Controller
             } else {
                 return response()->json('Data Sudah dimasukan');
             }
-            //$absensi->save();
-            // Storage::put($file, $image_base64);
-            // Storage::move($file, public_path('assets/img/upload/absensi/' . $fileName));
-            //file_put_contents(public_path() . '/assets/img/upload/absensi/' . $filename, $image_base64);
+
             if ($absensi->save()) {
-            return response()->json('Data berhasil Di Input');
+                return response()->json('Data berhasil Di Input');
             } else {
-            return response()->json('Data Gagal Disimpan');
+                return response()->json('Data Gagal Disimpan');
             }
-        }else{
-            return response()->json('Foto tida ditemukan');
+        } else {
+            return response()->json('Foto tidak ditemukan');
         }
-        //echo $diff_hour;
     }
 
     /**
