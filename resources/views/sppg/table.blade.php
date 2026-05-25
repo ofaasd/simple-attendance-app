@@ -39,6 +39,7 @@
                 </td>
                 <td>
                     <div class="btn-group">
+                        @if(!auth()->user()->hasRole('admin yayasan'))
                         <a href="javascript:void(0)" class="btn btn-primary btn-sm btn-edit-sppg"
                             data-id="{{$row->id}}" data-toggle="modal" data-target="#modal-sppg">
                             <i class="fas fa-pencil-alt"></i>
@@ -46,6 +47,7 @@
                         <a href="javascript:void(0)" class="btn btn-danger btn-sm btn-delete-sppg" data-id="{{$row->id}}">
                             <i class="fas fa-trash"></i>
                         </a>
+                        @endif
                     </div>
                 </td>
             </tr>

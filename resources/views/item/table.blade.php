@@ -19,12 +19,14 @@
                 <td>{{$row->uom->nama ?? '-'}}</td>
                 <td>
                     <div class="btn-group">
+                        @if(!auth()->user()->hasRole('admin yayasan'))
                         <a href="javascript:void(0)" class="btn btn-primary btn-sm btn-edit-item" data-id="{{$row->id}}" data-toggle="modal" data-target="#modal-item">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                         <a href="javascript:void(0)" class="btn btn-danger btn-sm btn-delete-item" data-id="{{$row->id}}">
                             <i class="fas fa-trash"></i>
                         </a>
+                        @endif
                     </div>
                 </td>
             </tr>

@@ -44,7 +44,7 @@
               </p>
             </a>
           </li>
-          @role('perwakilan yayasan|admin')
+          @role('perwakilan yayasan|admin|admin yayasan')
           <li class="nav-item">
             <a href="{{route('attendance')}}" class="nav-link {{(Route::currentRouteName() == "attendance")?"active":""}}" >
               <i class="nav-icon fas fa-pen-square"></i>
@@ -161,7 +161,7 @@
             </ul>
           </li>
           @endrole
-          @role('admin')
+          @role('admin|admin yayasan')
           <li class="nav-item">
             <a href="{{route('dashboard')}}" class="nav-link {{(Route::currentRouteName() == "dashboard")?"active":""}}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -300,7 +300,7 @@
           </li>
           @endrole
           
-          @role('admin')
+          @role('admin|admin yayasan')
           <li class="nav-item">
             <a href="{{route('attendance_report')}}" class="nav-link {{(Route::currentRouteName() == "attendance_report")?"active":""}}" >
               <i class="nav-icon fas fa-chart-area"></i>

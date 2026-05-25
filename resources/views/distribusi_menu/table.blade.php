@@ -75,12 +75,14 @@
                 @endif
             </td>
             <td>
+                @if(!auth()->user()->hasRole('admin yayasan'))
                 <a href="{{ route('distribusi_menu.edit', $row->id) }}" class="btn btn-warning btn-sm mb-1"><i class="fas fa-edit"></i> Edit</a>
                 <form action="{{ route('distribusi_menu.destroy', $row->id) }}" method="POST" class="d-inline-block form-delete">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-sm mb-1"><i class="fas fa-trash"></i> Hapus</button>
                 </form>
+                @endif
             </td>
         </tr>
         @endforeach

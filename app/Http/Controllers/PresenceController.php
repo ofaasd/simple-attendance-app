@@ -114,7 +114,7 @@ class PresenceController extends Controller
         // --- MODIFIKASI DISINI ---
         // Kondisi jika data WorkingHour TIDAK DITEMUKAN
         if (!$working) {
-            $ts_late = strtotime("00:00:00"); // Mengubah '00:00:00' menjadi timestamp
+            $ts_late = 0; // Set ke 0 agar tidak dianggap terlambat
             $overtime = 0; 
         } 
         // Kondisi jika data WorkingHour DITEMUKAN

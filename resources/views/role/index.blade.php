@@ -21,7 +21,9 @@
                 <div class="row">
                     <div class="card col-md-12">
                         <div class="card-header">
+                            @if(!auth()->user()->hasRole('admin yayasan'))
                             <a href="javascript:void(0)" class="btn btn-primary btn-create" data-toggle="modal" data-target="#modal-add">+ Add Role</a>
+                            @endif
                         </div>
                         <div class="card-body">
                             <div id="my-table"></div>

@@ -34,11 +34,13 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title mb-0">Daftar Cash In</h3>
+                        @if(!auth()->user()->hasRole('admin yayasan'))
                         <div class="card-tools">
                             <a href="{{ route('cash_in.create') }}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus mr-1"></i> Tambah Cash In
                             </a>
                         </div>
+                        @endif
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">

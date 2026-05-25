@@ -34,7 +34,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="card-title mb-0">Daftar History Cash Out</h3>
-                        @if(auth()->user()->hasRole('perwakilan yayasan') || auth()->user()->hasRole('admin'))
+                        @if((auth()->user()->hasRole('perwakilan yayasan') || auth()->user()->hasRole('admin')) && !auth()->user()->hasRole('admin yayasan'))
                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-add-cashout">
                                 Tambah Cash Out
                             </button>

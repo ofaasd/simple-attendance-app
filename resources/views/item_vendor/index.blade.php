@@ -21,7 +21,9 @@
                 <div class="row">
                     <div class="card col-md-12">
                         <div class="card-header">
+                            @if(!auth()->user()->hasRole('admin yayasan'))
                             <a href="{{ route('item_vendor.create') }}" class="btn btn-primary">+ Add Harga Vendor</a>
+                            @endif
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">

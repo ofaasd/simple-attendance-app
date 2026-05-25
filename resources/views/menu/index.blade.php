@@ -20,7 +20,9 @@
                 <div class="row">
                     <div class="card col-md-12">
                         <div class="card-header">
+                            @if(!auth()->user()->hasRole('admin yayasan'))
                             <a href="{{ route('item_menu.create') }}" class="btn btn-primary">+ {{$addButtonLabel ?? 'Add Menu'}}</a>
+                            @endif
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">

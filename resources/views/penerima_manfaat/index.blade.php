@@ -28,6 +28,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title mb-0">Daftar Penerima Manfaat</h3>
+                        @if(!auth()->user()->hasRole('admin yayasan'))
                         <div class="card-tools">
                             <button class="btn btn-success btn-sm mr-2" data-toggle="modal" data-target="#modal-import">
                                 <i class="fas fa-file-excel"></i> Import Excel
@@ -36,6 +37,7 @@
                                 <i class="fas fa-plus"></i> Tambah
                             </button>
                         </div>
+                        @endif
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-hover" id="pm-table">
@@ -60,6 +62,7 @@
                                     <td>{{ $row->no_telp }}</td>
                                     <td>{{ $row->pic }}</td>
                                     <td>
+                                        @if(!auth()->user()->hasRole('admin yayasan'))
                                         <button class="btn btn-warning btn-sm btn-edit" 
                                             data-id="{{ $row->id }}"
                                             data-nama="{{ $row->nama }}"
@@ -76,6 +79,7 @@
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Hapus</button>
                                         </form>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach

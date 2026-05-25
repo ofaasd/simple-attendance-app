@@ -28,11 +28,13 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title mb-0">Daftar Distribusi Menu</h3>
+                        @if(!auth()->user()->hasRole('admin yayasan'))
                         <div class="card-tools">
                             <a href="{{ route('distribusi_menu.create') }}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus"></i> Tambah Distribusi
                             </a>
                         </div>
+                        @endif
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">

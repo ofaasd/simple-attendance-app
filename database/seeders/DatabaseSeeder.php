@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserRolePermissionSeeder::class,
             PurchaseOrderApprovalDemoSeeder::class,
+            AddAdminYayasanRoleSeeder::class,
         ]);
     }
 }
