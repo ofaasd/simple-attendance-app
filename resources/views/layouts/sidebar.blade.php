@@ -70,21 +70,21 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{route('vendor')}}" class="nav-link {{ request()->routeIs('vendor*') ? 'active' : '' }}">
+                <a href="{{route('kategori')}}" class="nav-link {{ request()->routeIs('kategori*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Vendor</p>
+                  <p>Kategori Barang</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{route('item')}}" class="nav-link {{ request()->routeIs('item') || request()->routeIs('item.*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Bahan Pokok</p>
+                  <p>Daftar Barang</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{route('kategori')}}" class="nav-link {{ request()->routeIs('kategori*') ? 'active' : '' }}">
+                <a href="{{route('vendor')}}" class="nav-link {{ request()->routeIs('vendor*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Kategori</p>
+                  <p>Supplier/Vendor</p>
                 </a>
               </li>
               <li class="nav-item">
